@@ -34,7 +34,6 @@ end
 
 function reason:bindHotkeys(m)
     table.insert(reason.hotkeys, hs.hotkey.new(m.bce[1], m.bce[2], reason.bceShow))
-    -- table.insert(reason.hotkeys, hs.hotkey.new({}, 'escape', reason.bceHide))
 end
 
 -- bce setup
@@ -44,14 +43,11 @@ function reason:bceShow()
     -- rebuild on double press
     if reason.bceChooser:isVisible() then
         reason:bceRebuild()
+        hs.alert('rebuilt list')
     end
 
     reason.bceChooser:choices(reason.bceData)
     reason.bceChooser:show()
-end
-
-function reason:bceHide()
-    reason.bceChooser:hide()
 end
 
 function reason:bceCreate(choice)
