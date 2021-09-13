@@ -1,5 +1,5 @@
 local reason = {}
-local log = hs.logger.new('reason', 'debug')
+local log = hs.logger.new('reason', 'info')
 
 -- spoon setup
 -- ----- -----
@@ -8,57 +8,79 @@ reason.__index = reason
 reason.name = "reason config"
 reason.version = "1.0"
 reason.author = "ethan bailey"
+reason.hotkeys = {}
 
 function reason:start()
-    self.app = hs.appfinder.appFromName('Reason')
-    self.bceList = hs.json.read('bce_data.json')
-    self.bceChooser = hs.chooser.new(function(choice)
-        if choice then
-            -- select menu item, creating the device in daw
-            log.d(string.format('choice %s selected', choice))
-            self.app:selectMenuItem(choice['menuSelector'])
-
-            -- update frequency
-            print(choice)
-        end
+    reason.app = hs.appfinder.appFromName('Reason')
+    reason.bceData = hs.json.read('bce_data.json')
+    reason.bceFreq = hs.json.read('bce_freq.json')
+    reason.bceChooser = hs.chooser.new(function(choice)
+        return reason:bceCreate(choice)
     end)
 
-    self.watcher = hs.application.watcher.new(function(appName, eventType, app)
+    reason.watcher = hs.application.watcher.new(function(appName, eventType, app)
         if appName == 'Reason' then
             if eventType == hs.application.watcher.activated then
                 log.d('reason activated')
-                self.bceHotkey:enable()
+                for i=1, #reason.hotkeys do reason.hotkeys[i]:enable() end
             elseif eventType == hs.application.watcher.deactivated then
                 log.d('reason deactivated')
-                self.bceHotkey:disable()
+                for i=1, #reason.hotkeys do reason.hotkeys[i]:disable() end
             end
         end
     end)
-    self.watcher:start()
+    reason.watcher:start()
 end
 
 function reason:bindHotkeys(m)
-    self.bceHotkey = hs.hotkey.new(m.bce[1], m.bce[2], self.showBCEChooser)
+    table.insert(reason.hotkeys, hs.hotkey.new(m.bce[1], m.bce[2], reason.bceShow))
+    -- table.insert(reason.hotkeys, hs.hotkey.new({}, 'escape', reason.bceHide))
 end
-
 
 -- bce setup
 -- --- -----
 
-function reason:showBCEChooser()
+function reason:bceShow()
     -- rebuild on double press
-    if self.bceChooser:isVisible() then
-        self:bceRebuild()
+    if reason.bceChooser:isVisible() then
+        reason:bceRebuild()
     end
 
-    self.bceChooser:choices(self.bceList)
-    self.bceChooser:show()
+    reason.bceChooser:choices(reason.bceData)
+    reason.bceChooser:show()
 end
 
+function reason:bceHide()
+    reason.bceChooser:hide()
+end
+
+function reason:bceCreate(choice)
+    if choice then
+        -- select menu item, creating the device in daw
+        log.d(string.format('selected %s', choice['text']))
+        reason.app:selectMenuItem(choice['menuSelector'])
+
+        -- update frequency
+        if reason.bceFreq[choice['text']] == nil then
+            reason.bceFreq[choice['text']] = 0
+        else
+            reason.bceFreq[choice['text']] = reason.bceFreq[choice['text']] + 1
+        end
+        hs.json.write(reason.bceFreq, 'bce_freq.json', false, true)
+        reason:bceRefresh()
+    end
+end
+
+function reason:bceRefresh()
+    table.sort(reason.bceData, function (left, right)
+        return reason.bceFreq[left['text']] > reason.bceFreq[right['text']]
+    end)
+    hs.json.write(reason.bceData, 'bce_data.json', false, true)
+    reason.bceChooser:choices(reason.bceData)
+end
 
 function reason:bceRebuild()
     reason.app = hs.appfinder.appFromName('Reason') -- refresh the app instance
-    reason.bceList = {} -- delete list cache
     if reason.app:getMenuItems() == nil then return end -- quit if no menus are up yet
     local menus = reason.app:getMenuItems()[4]['AXChildren'][1]
     local newList = {}
@@ -69,7 +91,8 @@ function reason:bceRebuild()
                 if not(menus[i]['AXChildren'][1][j]['AXChildren'][1][k]['AXTitle'] == '') then
                     local title = menus[i]['AXChildren'][1][j]['AXChildren'][1][k]['AXTitle']
                     log.d(title)
-                    reason.bceList[title] = {
+
+                    table.insert(newList, {
                             ["text"] = title,
                             ["subText"] = string.format('%s - %s',
                                 menus[i]['AXTitle'],
@@ -80,9 +103,8 @@ function reason:bceRebuild()
                                 menus[i]['AXTitle'],
                                 menus[i]['AXChildren'][1][j]['AXTitle'],
                                 menus[i]['AXChildren'][1][j]['AXChildren'][1][k]['AXTitle'],
-                            },
-                            ["freq"] = reason.bceList[title]["freq"]
-                        }
+                            }
+                        })
                 end
             end
         end
@@ -97,16 +119,14 @@ function reason:bceRebuild()
                     ["menuSelector"] = {
                         "Create", "Players",
                         menus[10]['AXChildren'][1][i]['AXTitle'],
-                    },
-                    ["freq"] = reason.bceList[title]["freq"]
+                    }
                 })
         end
     end
 
     -- refresh json
-    hs.json.write(newList, 'bce_data.json', false, true)
-    reason.bceChooser:choices(newList)
-    hs.alert('reloaded')
+    reason.bceData = newList
+    reason:bceRefresh()
 end
 
 return reason
