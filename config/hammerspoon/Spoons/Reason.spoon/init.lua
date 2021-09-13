@@ -18,6 +18,10 @@ function reason:start()
         return reason:bceCreate(choice)
     end)
 
+    if hs.application.frontmostApplication():title() == 'Reason' then
+        log.d('reason activated')
+        for i=1, #reason.hotkeys do reason.hotkeys[i]:enable() end
+    end
     reason.watcher = hs.application.watcher.new(function(appName, eventType, app)
         if appName == 'Reason' then
             if eventType == hs.application.watcher.activated then
