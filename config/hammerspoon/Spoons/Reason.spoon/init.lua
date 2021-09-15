@@ -11,7 +11,6 @@ reason.author = "ethan bailey"
 reason.hotkeys = {}
 
 function reason:start()
-    reason.app = hs.appfinder.appFromName('Reason')
     reason.bceData = hs.json.read('bce_data.json')
     reason.bceFreq = hs.json.read('bce_freq.json')
     reason.bceChooser = hs.chooser.new(function(choice)
@@ -57,8 +56,9 @@ end
 function reason:bceCreate(choice)
     if choice then
         -- select menu item, creating the device in daw
+        local app = hs.appfinder.appFromName('Reason')
         log.d(string.format('selected %s', choice['text']))
-        reason.app:selectMenuItem(choice['menuSelector'])
+        app:selectMenuItem(choice['menuSelector'])
 
         -- update frequency
         if reason.bceFreq[choice['text']] == nil then
@@ -80,9 +80,9 @@ function reason:bceRefresh()
 end
 
 function reason:bceRebuild()
-    reason.app = hs.appfinder.appFromName('Reason') -- refresh the app instance
-    if reason.app:getMenuItems() == nil then return end -- quit if no menus are up yet
-    local menus = reason.app:getMenuItems()[4]['AXChildren'][1]
+    local app = hs.appfinder.appFromName('Reason')
+    if app:getMenuItems() == nil then return end -- quit if no menus are up yet
+    local menus = app:getMenuItems()[4]['AXChildren'][1]
     local newList = {}
 
     for i=7, 9 do
