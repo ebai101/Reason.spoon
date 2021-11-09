@@ -11,10 +11,10 @@ reason.author = "ethan bailey"
 reason.hotkeys = {}
 
 function reason:start()
-    reason.bceData = hs.json.read('bce_data.json')
-    reason.bceFreq = hs.json.read('bce_freq.json')
-    reason.bceChooser = hs.chooser.new(function(choice)
-        return reason:bceCreate(choice)
+    reason.devices = hs.json.read('bce_data.json')
+    reason.freq = hs.json.read('bce_freq.json')
+    reason.chooser = hs.chooser.new(function(choice)
+        return reason:create(choice)
     end)
 
     if hs.application.frontmostApplication():title() == 'Reason' then
@@ -36,24 +36,20 @@ function reason:start()
 end
 
 function reason:bindHotkeys(m)
-    table.insert(reason.hotkeys, hs.hotkey.new(m.bce[1], m.bce[2], reason.bceShow))
+    table.insert(reason.hotkeys, hs.hotkey.new(m.bce[1], m.bce[2], reason.show))
 end
 
--- bce setup
--- --- -----
-
-function reason:bceShow()
+function reason:show()
     -- rebuild on double press
-    if reason.bceChooser:isVisible() then
-        reason:bceRebuild()
-        hs.alert('rebuilt list')
+    if reason.chooser:isVisible() then
+        reason:rebuild()
     end
 
-    reason.bceChooser:choices(reason.bceData)
-    reason.bceChooser:show()
+    reason.chooser:choices(reason.devices)
+    reason.chooser:show()
 end
 
-function reason:bceCreate(choice)
+function reason:create(choice)
     if choice then
         -- select menu item, creating the device in daw
         local app = hs.appfinder.appFromName('Reason')
@@ -61,25 +57,31 @@ function reason:bceCreate(choice)
         app:selectMenuItem(choice['menuSelector'])
 
         -- update frequency
-        if reason.bceFreq[choice['text']] == nil then
-            reason.bceFreq[choice['text']] = 0
+        if reason.freq[choice['text']] == nil then
+            reason.freq[choice['text']] = 0
         else
-            reason.bceFreq[choice['text']] = reason.bceFreq[choice['text']] + 1
+            reason.freq[choice['text']] = reason.freq[choice['text']] + 1
         end
-        hs.json.write(reason.bceFreq, 'bce_freq.json', false, true)
-        reason:bceRefresh()
+        hs.json.write(reason.freq, 'bce_freq.json', true, true)
+        reason:refresh()
     end
 end
 
-function reason:bceRefresh()
-    table.sort(reason.bceData, function (left, right)
-        return reason.bceFreq[left['text']] > reason.bceFreq[right['text']]
+function reason:refresh()
+    table.sort(reason.devices, function (left, right)
+        if reason.freq[left['text']] == nil then
+            reason.freq[left['text']] = 0
+        end
+        if reason.freq[right['text']] == nil then
+            reason.freq[right['text']] = 0
+        end
+        return reason.freq[left['text']] > reason.freq[right['text']]
     end)
-    hs.json.write(reason.bceData, 'bce_data.json', false, true)
-    reason.bceChooser:choices(reason.bceData)
+    hs.json.write(reason.devices, 'bce_data.json', true, true)
+    reason.chooser:choices(reason.devices)
 end
 
-function reason:bceRebuild()
+function reason:rebuild()
     local app = hs.appfinder.appFromName('Reason')
     if app:getMenuItems() == nil then return end -- quit if no menus are up yet
     local menus = app:getMenuItems()[4]['AXChildren'][1]
@@ -125,8 +127,9 @@ function reason:bceRebuild()
     end
 
     -- refresh json
-    reason.bceData = newList
-    reason:bceRefresh()
+    reason.devices = newList
+    reason:refresh()
+    hs.alert('rebuilt list')
 end
 
 return reason
