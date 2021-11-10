@@ -16,7 +16,6 @@ function reason:start()
     reason.chooser = hs.chooser.new(function(choice)
         return reason:create(choice)
     end)
-
     if hs.application.frontmostApplication():title() == 'Reason' then
         log.d('reason activated')
         for i=1, #reason.hotkeys do reason.hotkeys[i]:enable() end
@@ -44,7 +43,6 @@ function reason:show()
     if reason.chooser:isVisible() then
         reason:rebuild()
     end
-
     reason.chooser:choices(reason.devices)
     reason.chooser:show()
 end
@@ -55,7 +53,6 @@ function reason:create(choice)
         local app = hs.appfinder.appFromName('Reason')
         log.d(string.format('selected %s', choice['text']))
         app:selectMenuItem(choice['menuSelector'])
-
         -- update frequency
         if reason.freq[choice['text']] == nil then
             reason.freq[choice['text']] = 0
@@ -93,7 +90,6 @@ function reason:rebuild()
                 if not(menus[i]['AXChildren'][1][j]['AXChildren'][1][k]['AXTitle'] == '') then
                     local title = menus[i]['AXChildren'][1][j]['AXChildren'][1][k]['AXTitle']
                     log.d(title)
-
                     table.insert(newList, {
                             ["text"] = title,
                             ["subText"] = string.format('%s - %s',
