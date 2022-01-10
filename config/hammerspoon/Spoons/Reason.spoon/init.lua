@@ -82,10 +82,9 @@ function reason:rebuild()
     local app = hs.appfinder.appFromName('Reason')
     if app:getMenuItems() == nil then return end -- quit if no menus are up yet
     local menus = app:getMenuItems()[4]['AXChildren'][1]
-    local newList = {}
+    local newDevices = {}
 
-    -- for i=7, 9 do -- Create -> Instruments, Effects, Utilities
-    for i=7, 9 do
+    for i=7, 9 do -- Create -> Instruments, Effects, Utilities
         local foundSubmenu = false
         for j=1, #menus[i]['AXChildren'][1] do
             -- iterate until we find the first submenu, which is always Built-in Devices
@@ -99,8 +98,8 @@ function reason:rebuild()
                 for k=1, #submenu do
                     if not(submenu[k]['AXTitle'] == '') then -- table contains divider bars, which have a blank title
                         local title = submenu[k]['AXTitle']
-                        log.d(title, ': ', menus[i]['AXTitle'])
-                        table.insert(newList, {
+                        log.d(title)
+                        table.insert(newDevices, {
                                 ["text"] = title,
                                 ["subText"] = string.format('%s - %s',
                                     menus[i]['AXTitle'],
@@ -118,23 +117,23 @@ function reason:rebuild()
             end
         end
     end
-    for i=1, #menus[10]['AXChildren'][1] do
-        if not menus[10]['AXChildren'][1][i]['AXTitle'] == '' then
+    for i=1, #menus[10]['AXChildren'][1] do -- Create -> Players
+        if not(menus[10]['AXChildren'][1][i]['AXTitle'] == '') then -- table may contain divider bars in the future
             local title = menus[10]['AXChildren'][1][i]['AXTitle']
             log.d(title)
-            table.insert(newList, {
+            table.insert(newDevices, {
                     ["text"] = title,
                     ["subText"] = "Players",
                     ["menuSelector"] = {
                         "Create", "Players",
-                        menus[10]['AXChildren'][1][i]['AXTitle'],
+                        title,
                     }
                 })
         end
     end
 
     -- refresh json
-    reason.devices = newList
+    reason.devices = newDevices
     reason:refresh()
     hs.alert('rebuilt list')
 end
