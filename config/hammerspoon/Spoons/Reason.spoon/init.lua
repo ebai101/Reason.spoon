@@ -12,10 +12,10 @@ reason.hotkeys = {}
 
 
 function reason:start()
-    reason.devices = hs.json.read('bce_data.json')
-    reason.freq = hs.json.read('bce_freq.json')
-    reason.chooser = hs.chooser.new(function(choice)
-        return reason:create(choice)
+    reason.createEffectDevices = hs.json.read('bce_data.json')
+    reason.createEffectFreq = hs.json.read('bce_freq.json')
+    reason.createEffectChooser = hs.chooser.new(function(choice)
+        return reason:createEffectSelect(choice)
     end)
     if hs.application.frontmostApplication():title() == 'Reason' then
         log.d('reason activated')
@@ -35,6 +35,11 @@ function reason:start()
     reason.watcher:start()
 end
 
+function reason:bindHotkeys(m)
+    table.insert(reason.hotkeys, hs.hotkey.new(m.bce[1], m.bce[2], reason.createEffectShow))
+    table.insert(reason.hotkeys, hs.hotkey.new(m.open[1], m.open[2], reason.openProject))
+end
+
 function reason:openProject()
     local frontWindow = hs.window.frontmostWindow()
     local openerWindow = hs.window('reason open file')
@@ -48,52 +53,47 @@ function reason:openProject()
     end
 end
 
-function reason:bindHotkeys(m)
-    table.insert(reason.hotkeys, hs.hotkey.new(m.bce[1], m.bce[2], reason.show))
-    table.insert(reason.hotkeys, hs.hotkey.new(m.open[1], m.open[2], reason.openProject))
-end
-
-function reason:show()
+function reason:createEffectShow()
     -- rebuild on double press
-    if reason.chooser:isVisible() then
-        reason:rebuild()
+    if reason.createEffectChooser:isVisible() then
+        reason:createEffectRebuild()
     end
-    reason.chooser:choices(reason.devices)
-    reason.chooser:show()
+    reason.createEffectChooser:choices(reason.createEffectDevices)
+    reason.createEffectChooser:show()
 end
 
-function reason:create(choice)
+function reason:createEffectSelect(choice)
     if choice then
         -- select menu item, creating the device in daw
         local app = hs.appfinder.appFromName('Reason')
         log.d(string.format('selected %s', choice['text']))
         app:selectMenuItem(choice['menuSelector'])
         -- update frequency
-        if reason.freq[choice['text']] == nil then
-            reason.freq[choice['text']] = 0
+        if reason.createEffectFreq[choice['text']] == nil then
+            reason.createEffectFreq[choice['text']] = 0
         else
-            reason.freq[choice['text']] = reason.freq[choice['text']] + 1
+            reason.createEffectFreq[choice['text']] = reason.createEffectFreq[choice['text']] + 1
         end
-        hs.json.write(reason.freq, 'bce_freq.json', true, true)
-        reason:refresh()
+        hs.json.write(reason.createEffectFreq, 'bce_freq.json', true, true)
+        reason:createEffectRefresh()
     end
 end
 
-function reason:refresh()
-    table.sort(reason.devices, function (left, right)
-        if reason.freq[left['text']] == nil then
-            reason.freq[left['text']] = 0
+function reason:createEffectRefresh()
+    table.sort(reason.createEffectDevices, function (left, right)
+        if reason.createEffectFreq[left['text']] == nil then
+            reason.createEffectFreq[left['text']] = 0
         end
-        if reason.freq[right['text']] == nil then
-            reason.freq[right['text']] = 0
+        if reason.createEffectFreq[right['text']] == nil then
+            reason.createEffectFreq[right['text']] = 0
         end
-        return reason.freq[left['text']] > reason.freq[right['text']]
+        return reason.createEffectFreq[left['text']] > reason.createEffectFreq[right['text']]
     end)
-    hs.json.write(reason.devices, 'bce_data.json', true, true)
-    reason.chooser:choices(reason.devices)
+    hs.json.write(reason.createEffectDevices, 'bce_data.json', true, true)
+    reason.createEffectChooser:choices(reason.createEffectDevices)
 end
 
-function reason:rebuild()
+function reason:createEffectRebuild()
     local app = hs.appfinder.appFromName('Reason')
     if app:getMenuItems() == nil then return end -- quit if no menus are up yet
     local menus = app:getMenuItems()[4]['AXChildren'][1]
@@ -148,8 +148,8 @@ function reason:rebuild()
     end
 
     -- refresh json
-    reason.devices = newDevices
-    reason:refresh()
+    reason.createEffectDevices = newDevices
+    reason:createEffectRefresh()
     hs.alert('rebuilt list')
 end
 
