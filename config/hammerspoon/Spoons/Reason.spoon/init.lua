@@ -21,7 +21,7 @@ function reason:start()
         log.d('reason activated')
         for i=1, #reason.hotkeys do reason.hotkeys[i]:enable() end
     end
-    reason.watcher = hs.application.watcher.new(function(appName, eventType, app)
+    reason.watcher = hs.application.watcher.new(function(appName, eventType)
         if appName == 'Reason' then
             if eventType == hs.application.watcher.activated then
                 log.d('reason activated')
