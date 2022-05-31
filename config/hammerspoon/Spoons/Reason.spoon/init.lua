@@ -10,6 +10,7 @@ reason.version = "1.0"
 reason.author = "ethan bailey"
 reason.hotkeys = {}
 
+
 function reason:start()
     reason.devices = hs.json.read('bce_data.json')
     reason.freq = hs.json.read('bce_freq.json')
@@ -34,8 +35,22 @@ function reason:start()
     reason.watcher:start()
 end
 
+function reason:openProject()
+    local frontWindow = hs.window.frontmostWindow()
+    local openerWindow = hs.window('reason open file')
+
+    if openerWindow == nil then
+        hs.task.new('/usr/local/bin/alacritty', nil, {'--config-file', os.getenv('HOME')..'/.config/alacritty/reason.yml'}):start()
+    elseif openerWindow ~= frontWindow then
+        openerWindow:focus()
+    elseif openerWindow == frontWindow then
+        openerWindow:application():hide()
+    end
+end
+
 function reason:bindHotkeys(m)
     table.insert(reason.hotkeys, hs.hotkey.new(m.bce[1], m.bce[2], reason.show))
+    table.insert(reason.hotkeys, hs.hotkey.new(m.open[1], m.open[2], reason.openProject))
 end
 
 function reason:show()
