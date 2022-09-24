@@ -15,21 +15,28 @@ function reason:start()
         return reason:createDeviceSelect(choice)
     end)
     if hs.application.frontmostApplication():title() == 'Reason' then
-        log.d('reason activated')
-        for i=1, #reason.hotkeys do reason.hotkeys[i]:enable() end
+        reason:activate()
     end
     reason.watcher = hs.application.watcher.new(function(appName, eventType)
         if appName == 'Reason' then
             if eventType == hs.application.watcher.activated then
-                log.d('reason activated')
-                for i=1, #reason.hotkeys do reason.hotkeys[i]:enable() end
+                reason:activate()
             elseif eventType == hs.application.watcher.deactivated then
-                log.d('reason deactivated')
-                for i=1, #reason.hotkeys do reason.hotkeys[i]:disable() end
+                reason:deactivate()
             end
         end
     end)
     reason.watcher:start()
+end
+
+function reason:activate()
+    log.d('reason activated')
+    for i=1, #reason.hotkeys do reason.hotkeys[i]:enable() end
+end
+
+function reason:deactivate()
+    log.d('reason deactivated')
+    for i=1, #reason.hotkeys do reason.hotkeys[i]:disable() end
 end
 
 function reason:bindHotkeys(m)
@@ -38,19 +45,24 @@ function reason:bindHotkeys(m)
 end
 
 function reason:openProject()
-    -- performs a fuzzy search of all spotlight-indexed reason files
-    -- opens the selected file
+    reason.projectSpotlight = hs.spotlight.new():queryString([[ kMDItemDisplayName = "*.reason" ]])
+        :callbackMessages("didUpdate", "inProgress")
+        :start()
+    print(hs.inspect(reason.projectSpotlight))
 
-    local frontWindow = hs.window.frontmostWindow()
-    local openerWindow = hs.window('reason open file')
-
-    if openerWindow == nil then
-        hs.task.new('/usr/local/bin/alacritty', nil, {'--config-file', os.getenv('HOME')..'/.config/alacritty/reason.yml'}):start()
-    elseif openerWindow ~= frontWindow then
-        openerWindow:focus()
-    elseif openerWindow == frontWindow then
-        openerWindow:application():hide()
-    end
+    -- local command = hs.execute("mdfind 'kMDItemDisplayName == *.reason' -0 | xargs -0 'mdls -name kMDItemFSContentChangeDate -name kMDItemFSName -raw && echo $1' | xargs -0 printf '%s %s\n'")
+    -- print(command)
+    -- local files = {}
+    -- for line in string.gmatch(command, "([^\n]+)") do
+    --     local project = {
+    --         ['name'] = line:match("^.+/(.+)$"),
+    --         ['time'] = string.sub(line,0,19),
+    --         ['path'] = string.sub(line,27)
+    --     }
+    --     table.insert(files, project)
+    -- end
+    -- print(hs.inspect(files))
+    return
 end
 
 function reason:createDeviceShow()
