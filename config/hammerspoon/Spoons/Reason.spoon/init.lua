@@ -128,7 +128,8 @@ function reason:createDeviceRebuild()
         for j=1, #menus[i]['AXChildren'][1] do
             -- iterate until we find Built-in Devices
             local subtitle = menus[i]['AXChildren'][1][j]['AXTitle']
-            if subtitle == 'Built-in Devices' then foundSubmenu = true end
+            log.d(subtitle)
+            if subtitle == 'Reason Studios' then foundSubmenu = true end
             -- iterate thru this submenu and the successive submenus
             if foundSubmenu then
                 local submenu = menus[i]['AXChildren'][1][j]['AXChildren'][1]
