@@ -1,8 +1,6 @@
 local mouseActions = {}
 local log = hs.logger.new('mouseActs', 'debug')
 
-mouseActions.eventTaps = {}
-
 function mouseActions:start()
 	mouseActions.eventtap:start()
 end
