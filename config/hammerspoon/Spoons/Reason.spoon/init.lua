@@ -9,10 +9,12 @@ reason.hotkeys = {}
 
 reason.spoonPath = hs.spoons.scriptPath()
 reason.createDevice = dofile(reason.spoonPath .. 'create_device.lua')
+reason.mouseActions = dofile(reason.spoonPath .. 'mouse_actions.lua')
 
 
 function reason:start()
     reason.createDevice:start()
+    reason.mouseActions:start()
 
     reason.watcher = hs.application.watcher.new(function(appName, eventType)
         if appName == 'Reason' then
@@ -36,8 +38,14 @@ function reason:deactivate()
     for i = 1, #reason.hotkeys do reason.hotkeys[i]:disable() end
 end
 
-function reason:bindHotkeys(m)
-    table.insert(reason.hotkeys, hs.hotkey.new(m.bce[1], m.bce[2], reason.createDevice.show))
+local function loadModuleHotkeys(module, maps)
+    for _, v in pairs(module:hotkeys(maps)) do
+        table.insert(reason.hotkeys, v)
+    end
+end
+
+function reason:bindHotkeys(maps)
+    loadModuleHotkeys(reason.createDevice, maps)
 end
 
 return reason

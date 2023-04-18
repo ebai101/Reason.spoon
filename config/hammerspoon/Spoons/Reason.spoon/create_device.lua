@@ -17,7 +17,7 @@ function createDevice:show()
 	-- triggers a rebuild on double press
 
 	if createDevice.chooser:isVisible() then
-		createDevice:rebuildAll()
+		createDevice:rebuild()
 	else
 		createDevice.chooser:choices(createDevice.deviceData)
 		createDevice.chooser:show()
@@ -71,7 +71,7 @@ function createDevice:refresh()
 	createDevice.chooser:choices(createDevice.deviceData)
 end
 
-function createDevice:rebuildPresets()
+local function rebuildPresets()
 	-- rebuilds the preset database from the filesystem
 
 	local commandString =
@@ -94,7 +94,7 @@ function createDevice:rebuildPresets()
 	return presets
 end
 
-function createDevice:rebuildDevices()
+local function rebuildDevices()
 	-- rebuilds the device database by scraping the menus
 
 	local app = hs.appfinder.appFromName('Reason')
@@ -156,23 +156,29 @@ function createDevice:rebuildDevices()
 	return devices
 end
 
-function createDevice:rebuildAll()
+function createDevice:rebuild()
 	-- update table and refresh
 	local newData = {}
 
 	-- build devices
-	for k, v in pairs(createDevice:rebuildDevices()) do
+	for _, v in pairs(createDevice:rebuildDevices()) do
 		table.insert(newData, v)
 	end
 
 	-- build presets
-	for k, v in pairs(createDevice:rebuildPresets()) do
+	for _, v in pairs(createDevice:rebuildPresets()) do
 		table.insert(newData, v)
 	end
 
 	createDevice.deviceData = newData
 	createDevice:refresh()
 	hs.alert('rebuilt device list')
+end
+
+function createDevice:hotkeys(maps)
+	local keys = {}
+	table.insert(keys, hs.hotkey.new(maps.bce[1], maps.bce[2], createDevice.show))
+	return keys
 end
 
 return createDevice
