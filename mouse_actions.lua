@@ -7,7 +7,6 @@ end
 
 mouseActions.eventtap = hs.eventtap.new(
 	{ hs.eventtap.event.types.otherMouseUp }, function(event)
-		print(hs.inspect(event))
 		local buttonNumber = tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties.mouseEventButtonNumber)))
 
 		if buttonNumber == 4 then

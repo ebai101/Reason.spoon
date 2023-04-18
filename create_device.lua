@@ -1,5 +1,5 @@
 local createDevice = {}
-local log = hs.logger.new('createDev', 'info')
+local log = hs.logger.new('createDev', 'debug')
 
 createDevice.dataFile = 'bce_data.json'
 createDevice.freqFile = 'bce_freq.json'

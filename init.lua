@@ -19,7 +19,7 @@ reason.spoonPath = hs.spoons.scriptPath()
 reason.createDevice = dofile(reason.spoonPath .. 'create_device.lua')
 reason.mouseActions = dofile(reason.spoonPath .. 'mouse_actions.lua')
 
-local log = hs.logger.new('reason', 'info')
+local log = hs.logger.new('reason', 'debug')
 
 function reason:start()
     reason.createDevice:start()
