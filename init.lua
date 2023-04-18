@@ -1,16 +1,25 @@
+--- === Reason ===
+---
+--- workflow optimizations for Reason
+---
+--- Download: eventually
+
 local reason = {}
-local log = hs.logger.new('reason', 'info')
-
 reason.__index = reason
-reason.name = "reason config"
-reason.version = "1.0"
-reason.author = "ethan bailey"
-reason.hotkeys = {}
 
+-- Metadata
+reason.name = "reason config"
+reason.version = "0.1.0"
+reason.author = "Ethan Bailey <ebailey256@gmail.com>"
+reason.homepage = "https://github.com/ebai101/Reason.spoon"
+reason.license = "MIT - https://opensource.org/licenses/MIT"
+
+reason.hotkeys = {}
 reason.spoonPath = hs.spoons.scriptPath()
 reason.createDevice = dofile(reason.spoonPath .. 'create_device.lua')
 reason.mouseActions = dofile(reason.spoonPath .. 'mouse_actions.lua')
 
+local log = hs.logger.new('reason', 'info')
 
 function reason:start()
     reason.createDevice:start()
