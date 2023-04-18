@@ -64,7 +64,7 @@ function reason:createDeviceSelect(choice)
             -- open preset
             local openFilename = choice["subText"]
             local openCommand = string.format('open -a Reason\\ 12 "%s"', openFilename)
-            print(openCommand)
+            log.d(openCommand)
             hs.execute(openCommand)
         else
             -- create device
@@ -106,7 +106,11 @@ function reason:createDevicePresetRebuild()
     -- rebuilds the preset database from the filesystem
 
     local commandString =
-    [[ /opt/homebrew/bin/fd -tf . /Users/ethan/My\ Drive/PATCHES/EFFECTS /Users/ethan/My\ Drive/PATCHES/INSTRUMENTS /-E "*.wav" -E "*.asd" -E "*RM-20*" ]]
+    [[ /opt/homebrew/bin/fd -tf . \
+    /Users/ethan/My\ Drive/PATCHES/EFFECTS \
+    /Users/ethan/My\ Drive/PATCHES/INSTRUMENTS \
+    /Users/ethan/My\ Drive/PATCHES/VOCALS \
+    -E "*.wav" -E "*.asd" -E "*RM-20*" -E "*.fxp" ]]
     local command = hs.execute(commandString)
     local presets = {}
 
