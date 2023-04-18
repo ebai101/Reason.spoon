@@ -31,38 +31,16 @@ end
 
 function reason:activate()
     log.d('reason activated')
-    for i=1, #reason.hotkeys do reason.hotkeys[i]:enable() end
+    for i = 1, #reason.hotkeys do reason.hotkeys[i]:enable() end
 end
 
 function reason:deactivate()
     log.d('reason deactivated')
-    for i=1, #reason.hotkeys do reason.hotkeys[i]:disable() end
+    for i = 1, #reason.hotkeys do reason.hotkeys[i]:disable() end
 end
 
 function reason:bindHotkeys(m)
     table.insert(reason.hotkeys, hs.hotkey.new(m.bce[1], m.bce[2], reason.createDeviceShow))
-    table.insert(reason.hotkeys, hs.hotkey.new(m.open[1], m.open[2], reason.openProject))
-end
-
-function reason:openProject()
-    reason.projectSpotlight = hs.spotlight.new():queryString([[ kMDItemDisplayName = "*.reason" ]])
-        :callbackMessages("didUpdate", "inProgress")
-        :start()
-    print(hs.inspect(reason.projectSpotlight))
-
-    -- local command = hs.execute("mdfind 'kMDItemDisplayName == *.reason' -0 | xargs -0 'mdls -name kMDItemFSContentChangeDate -name kMDItemFSName -raw && echo $1' | xargs -0 printf '%s %s\n'")
-    -- print(command)
-    -- local files = {}
-    -- for line in string.gmatch(command, "([^\n]+)") do
-    --     local project = {
-    --         ['name'] = line:match("^.+/(.+)$"),
-    --         ['time'] = string.sub(line,0,19),
-    --         ['path'] = string.sub(line,27)
-    --     }
-    --     table.insert(files, project)
-    -- end
-    -- print(hs.inspect(files))
-    return
 end
 
 function reason:createDeviceShow()
@@ -82,9 +60,19 @@ function reason:createDeviceSelect(choice)
     -- writes the updated frequency data to bce_freq.json
 
     if choice then
-        local app = hs.appfinder.appFromName('Reason')
-        log.d(string.format('selected %s', choice['text']))
-        app:selectMenuItem(choice['menuSelector'])
+        if choice["menuSelector"] == nil then
+            -- open preset
+            local openFilename = choice["subText"]
+            local openCommand = string.format('open -a Reason\\ 12 "%s"', openFilename)
+            print(openCommand)
+            hs.execute(openCommand)
+        else
+            -- create device
+            local app = hs.appfinder.appFromName('Reason')
+            log.d(string.format('selected %s', choice['text']))
+            app:selectMenuItem(choice['menuSelector'])
+        end
+
         if reason.createDeviceFreq[choice['text']] == nil then
             reason.createDeviceFreq[choice['text']] = 0
         else
@@ -101,7 +89,7 @@ function reason:createDeviceRefresh()
     -- sorts the device table by the frequency data in bce_freq.json
     -- writes the list of choices to bce_data.json
 
-    table.sort(reason.createDeviceData, function (left, right)
+    table.sort(reason.createDeviceData, function(left, right)
         if reason.createDeviceFreq[left['text']] == nil then
             reason.createDeviceFreq[left['text']] = 0
         end
@@ -114,18 +102,37 @@ function reason:createDeviceRefresh()
     reason.createDeviceChooser:choices(reason.createDeviceData)
 end
 
+function reason:createDevicePresetRebuild()
+    -- rebuilds the preset database from the filesystem
+
+    local commandString =
+    [[ /opt/homebrew/bin/fd -tf . /Users/ethan/My\ Drive/PATCHES/EFFECTS /Users/ethan/My\ Drive/PATCHES/INSTRUMENTS /-E "*.wav" -E "*.asd" -E "*RM-20*" ]]
+    local command = hs.execute(commandString)
+    local presets = {}
+
+    for line in string.gmatch(command, '[^\r\n]+') do
+        local name = line:match("^.+/(.+)$")
+        table.insert(presets, {
+            ["text"] = name,
+            ["subText"] = line,
+        })
+    end
+
+    return presets
+end
+
 function reason:createDeviceRebuild()
     -- rebuilds the device database by scraping the menus
 
     local app = hs.appfinder.appFromName('Reason')
-    if app:getMenuItems() == nil then return end -- quit if no menus are up yet
+    if app:getMenuItems() == nil then return end         -- quit if no menus are up yet
     local menus = app:getMenuItems()[4]['AXChildren'][1] -- children of "Create" menu
     local newDevices = {}
 
     -- build Instruments, Effects, and Utilities
-    for i=7, 9 do
+    for i = 7, 9 do
         local foundSubmenu = false
-        for j=1, #menus[i]['AXChildren'][1] do
+        for j = 1, #menus[i]['AXChildren'][1] do
             -- iterate until we find Built-in Devices
             local subtitle = menus[i]['AXChildren'][1][j]['AXTitle']
             log.d(subtitle)
@@ -133,23 +140,23 @@ function reason:createDeviceRebuild()
             -- iterate thru this submenu and the successive submenus
             if foundSubmenu then
                 local submenu = menus[i]['AXChildren'][1][j]['AXChildren'][1]
-                for k=1, #submenu do
-                    if not(submenu[k]['AXTitle'] == '') then -- table contains divider bars, which have a blank title
+                for k = 1, #submenu do
+                    if not (submenu[k]['AXTitle'] == '') then -- table contains divider bars, which have a blank title
                         local title = submenu[k]['AXTitle']
                         log.d(title)
                         table.insert(newDevices, {
-                                ["text"] = title,
-                                ["subText"] = string.format('%s - %s',
-                                    menus[i]['AXTitle'],
-                                    subtitle
-                                    ),
-                                ["menuSelector"] = {
-                                    "Create",
-                                    menus[i]['AXTitle'],
-                                    subtitle,
-                                    submenu[k]['AXTitle'],
-                                }
-                            })
+                            ["text"] = title,
+                            ["subText"] = string.format('%s - %s',
+                                menus[i]['AXTitle'],
+                                subtitle
+                            ),
+                            ["menuSelector"] = {
+                                "Create",
+                                menus[i]['AXTitle'],
+                                subtitle,
+                                submenu[k]['AXTitle'],
+                            }
+                        })
                     end
                 end
             end
@@ -157,19 +164,24 @@ function reason:createDeviceRebuild()
     end
 
     -- build Players
-    for i=1, #menus[10]['AXChildren'][1] do
-        if not(menus[10]['AXChildren'][1][i]['AXTitle'] == '') then -- table may contain divider bars in the future
+    for i = 1, #menus[10]['AXChildren'][1] do
+        if not (menus[10]['AXChildren'][1][i]['AXTitle'] == '') then -- table may contain divider bars in the future
             local title = menus[10]['AXChildren'][1][i]['AXTitle']
             log.d(title)
             table.insert(newDevices, {
-                    ["text"] = title,
-                    ["subText"] = "Players",
-                    ["menuSelector"] = {
-                        "Create", "Players",
-                        title,
-                    }
-                })
+                ["text"] = title,
+                ["subText"] = "Players",
+                ["menuSelector"] = {
+                    "Create", "Players",
+                    title,
+                }
+            })
         end
+    end
+
+    -- build presets
+    for k, v in pairs(reason:createDevicePresetRebuild()) do
+        table.insert(newDevices, v)
     end
 
     -- update table and refresh
