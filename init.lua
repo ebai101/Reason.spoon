@@ -16,15 +16,13 @@ reason.license = 'MIT - https://opensource.org/licenses/MIT'
 
 reason.spoonPath = hs.spoons.scriptPath()
 reason.createDevice = dofile(reason.spoonPath .. 'create_device.lua')
-reason.mouseActions = dofile(reason.spoonPath .. 'mouse_actions.lua')
-reason.remaps = dofile(reason.spoonPath .. 'remaps.lua')
+reason.globalMaps = dofile(reason.spoonPath .. 'global_maps.lua')
 reason.defaultKeys = dofile(reason.spoonPath .. 'default_keys.lua')
 
 local log = hs.logger.new('reason', 'debug')
 
 function reason:start()
     reason.createDevice:start()
-    reason.mouseActions:start()
 
     reason.watcher = hs.application.watcher.new(function(appName, eventType)
         if appName == 'Reason' then
@@ -40,24 +38,32 @@ end
 
 function reason:activate()
     log.d('reason activated')
-    for i = 1, #reason.hotkeys do reason.hotkeys[i]:enable() end
+    for _, v in pairs(reason.hotkeys) do v:enable() end
+    for _, v in pairs(reason.eventtaps) do v:start() end
 end
 
 function reason:deactivate()
     log.d('reason deactivated')
-    for i = 1, #reason.hotkeys do reason.hotkeys[i]:disable() end
+    for _, v in pairs(reason.hotkeys) do v:disable() end
+    for _, v in pairs(reason.eventtaps) do v:stop() end
 end
 
-local function loadModuleHotkeys(module, maps)
+local function loadHotkeys(module, maps)
     for _, v in pairs(module:hotkeys(maps)) do
         table.insert(reason.hotkeys, v)
     end
 end
 
+local function loadEventtap(module)
+    table.insert(reason.eventtaps, module.eventtap)
+end
+
 function reason:bindHotkeys(maps)
     reason.hotkeys = {}
-    loadModuleHotkeys(reason.remaps, maps)
-    loadModuleHotkeys(reason.createDevice, maps)
+    reason.eventtaps = {}
+    loadHotkeys(reason.globalMaps, maps)
+    loadEventtap(reason.globalMaps)
+    loadHotkeys(reason.createDevice, maps)
 end
 
 return reason

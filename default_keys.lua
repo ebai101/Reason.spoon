@@ -9,4 +9,5 @@ return {
 	exportSong = { { 'ctrl' }, 't' },
 	exportLoop = { { 'ctrl', 'cmd' }, 't' },
 	bounceMixerChannels = { { 'ctrl' }, 'b' },
+	color = { { 'ctrl', 'cmd' }, 'c' },
 }
