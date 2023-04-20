@@ -18,6 +18,7 @@ reason.createDevice = dofile(hs.spoons.scriptPath() .. 'create_device.lua')
 reason.globalMaps = dofile(hs.spoons.scriptPath() .. 'global_maps.lua')
 reason.defaultKeys = dofile(hs.spoons.scriptPath() .. 'default_keys.lua')
 
+
 local log = hs.logger.new('reason', 'debug')
 
 function reason:start()
@@ -37,32 +38,16 @@ end
 
 function reason:activate()
     log.d('reason activated')
-    for _, v in pairs(reason.hotkeys) do v:enable() end
-    for _, v in pairs(reason.eventtaps) do v:start() end
+    reason.globalMaps:activate()
 end
 
 function reason:deactivate()
     log.d('reason deactivated')
-    for _, v in pairs(reason.hotkeys) do v:disable() end
-    for _, v in pairs(reason.eventtaps) do v:stop() end
-end
-
-local function loadHotkeys(module, maps)
-    for _, v in pairs(module:hotkeys(maps)) do
-        table.insert(reason.hotkeys, v)
-    end
-end
-
-local function loadEventtap(module)
-    table.insert(reason.eventtaps, module.eventtap)
+    reason.globalMaps:deactivate()
 end
 
 function reason:bindHotkeys(maps)
-    reason.hotkeys = {}
-    reason.eventtaps = {}
-    loadHotkeys(reason.globalMaps, maps)
-    loadEventtap(reason.globalMaps)
-    loadHotkeys(reason.createDevice, maps)
+    reason.globalMaps:bindHotkeys(maps)
 end
 
 return reason

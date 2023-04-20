@@ -2,7 +2,35 @@ local globalMaps = {}
 local log = hs.logger.new('global', 'debug')
 local app = hs.appfinder.appFromName('Reason')
 
+globalMaps.hotkeys = {}
 globalMaps.toolWindowActive = false
+
+-----------
+-- setup --
+-----------
+
+function globalMaps:bindHotkeys(maps)
+	table.insert(globalMaps.hotkeys, globalMaps:togglePianoKeys(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:toggleToolWindow(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:toggleSpectrumEQ(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:toggleRegrooveMixer(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:toggleBrowser(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:record(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:exportSong(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:exportLoop(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:bounceMixerChannels(maps))
+	-- table.insert(globalMaps.hotkeys, globalMaps:color(maps))
+end
+
+function globalMaps:activate()
+	for _, v in pairs(globalMaps.hotkeys) do v:enable() end
+	globalMaps.eventtap:start()
+end
+
+function globalMaps:deactivate()
+	for _, v in pairs(globalMaps.hotkeys) do v:disable() end
+	globalMaps.eventtap:stop()
+end
 
 -----------
 -- mouse --
@@ -144,23 +172,6 @@ function globalMaps:color(m)
 	return hs.hotkey.new(m.color[1], m.color[2], function()
 		log.d(hs.inspect(hs.appfinder.appFromName('Reason'):getMenuItems()[3]['AXChildren'][1][21]))
 	end)
-end
-
-function globalMaps:hotkeys(maps)
-	local keys = {}
-
-	table.insert(keys, globalMaps:togglePianoKeys(maps))
-	table.insert(keys, globalMaps:toggleToolWindow(maps))
-	table.insert(keys, globalMaps:toggleSpectrumEQ(maps))
-	table.insert(keys, globalMaps:toggleRegrooveMixer(maps))
-	table.insert(keys, globalMaps:toggleRegrooveMixer(maps))
-	table.insert(keys, globalMaps:record(maps))
-	table.insert(keys, globalMaps:exportSong(maps))
-	table.insert(keys, globalMaps:exportLoop(maps))
-	table.insert(keys, globalMaps:bounceMixerChannels(maps))
-	-- table.insert(keys, globalMaps:color(maps))
-
-	return keys
 end
 
 return globalMaps
