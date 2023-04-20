@@ -16,6 +16,7 @@ reason.license = 'MIT - https://opensource.org/licenses/MIT'
 
 reason.createDevice = dofile(hs.spoons.scriptPath() .. 'create_device.lua')
 reason.globalMaps = dofile(hs.spoons.scriptPath() .. 'global_maps.lua')
+reason.modes = dofile(hs.spoons.scriptPath() .. 'modes.lua')
 reason.defaultKeys = dofile(hs.spoons.scriptPath() .. 'default_keys.lua')
 
 
@@ -39,15 +40,21 @@ end
 function reason:activate()
     log.d('reason activated')
     reason.globalMaps:activate()
+    reason.createDevice:activate()
+    reason.modes:activate()
 end
 
 function reason:deactivate()
     log.d('reason deactivated')
     reason.globalMaps:deactivate()
+    reason.createDevice:deactivate()
+    reason.modes:deactivate()
 end
 
 function reason:bindHotkeys(maps)
     reason.globalMaps:bindHotkeys(maps)
+    reason.createDevice:bindHotkeys(maps)
+    reason.modes:bindHotkeys(maps)
 end
 
 return reason

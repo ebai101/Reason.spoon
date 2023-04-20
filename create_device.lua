@@ -1,8 +1,13 @@
 local createDevice = {}
 local log = hs.logger.new('createDev', 'debug')
 
+createDevice.hotkeys = {}
 createDevice.dataFile = 'bce_data.json'
 createDevice.freqFile = 'bce_freq.json'
+
+-----------
+-- setup --
+-----------
 
 function createDevice:start()
 	createDevice.deviceData = hs.json.read(createDevice.dataFile)
@@ -11,6 +16,22 @@ function createDevice:start()
 		return createDevice:select(choice)
 	end)
 end
+
+function createDevice:bindHotkeys(maps)
+	table.insert(createDevice.hotkeys, hs.hotkey.new(maps.createDevice[1], maps.createDevice[2], createDevice.show))
+end
+
+function createDevice:activate()
+	for _, v in pairs(createDevice.hotkeys) do v:enable() end
+end
+
+function createDevice:deactivate()
+	for _, v in pairs(createDevice.hotkeys) do v:disable() end
+end
+
+--------------------
+-- implementation --
+--------------------
 
 function createDevice:show()
 	-- shows the device chooser
@@ -173,12 +194,6 @@ function createDevice:rebuild()
 	createDevice.deviceData = newData
 	createDevice:refresh()
 	hs.alert('rebuilt device list')
-end
-
-function createDevice:hotkeys(maps)
-	local keys = {}
-	table.insert(keys, hs.hotkey.new(maps.bce[1], maps.bce[2], createDevice.show))
-	return keys
 end
 
 return createDevice

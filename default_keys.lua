@@ -1,5 +1,11 @@
 return {
-	bce = { { 'cmd' }, 'f' },
+	-- modes
+	toggleMixer = { { 'ctrl' }, 'q' },
+	toggleRack = { { 'ctrl' }, 'w' },
+	toggleSequencer = { { 'ctrl' }, 'e' },
+	-- create device
+	createDevice = { { 'cmd' }, 'f' },
+	-- global
 	togglePianoKeys = { { 'ctrl' }, 'a' },
 	toggleToolWindow = { { 'ctrl' }, 'd' },
 	toggleSpectrumEQ = { { 'ctrl' }, 's' },
@@ -10,4 +16,22 @@ return {
 	exportLoop = { { 'ctrl', 'cmd' }, 't' },
 	bounceMixerChannels = { { 'ctrl' }, 'b' },
 	color = { { 'ctrl', 'cmd' }, 'c' },
+	createMixChannel = { { 'cmd', 'shift' }, 't' },
+	-- rack
+	autoRoute = { { 'alt' }, 's' },
+	browsePatches = { { 'alt' }, 'f' },
+	disconnectDevice = { { 'alt' }, 'd' },
+	resetDevice = { { 'alt' }, 'a' },
+	combine = { { 'ctrl' }, 'g' },
+	-- sequencer
+	bounceClip = { { 'ctrl', 'cmd' }, 'b' },
+	flatten = { { 'ctrl', 'cmd' }, 'f' },
+	joinClips = { { 'ctrl' }, 'g' },
+	doubleTempo = { { 'alt' }, 'z' },
+	halfTempo = { { 'alt' }, 'x' },
+	legato = { { 'alt' }, 'a' },
+	quantize = { { 'alt' }, 'q' },
+	reverse = { { 'alt' }, 'r' },
+	toggleLoop = { {}, 'tab' },
+	setLoopAndPlay = { {}, '`' },
 }
