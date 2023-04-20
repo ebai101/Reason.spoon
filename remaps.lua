@@ -77,6 +77,16 @@ function remaps:record()
 	log.d('record')
 end
 
+function remaps:exportSong()
+	app:selectMenuItem('Export Song as Audio File...')
+	log.d('export song as audio file selected')
+end
+
+function remaps:exportLoop()
+	app:selectMenuItem('Export Loop as Audio File...')
+	log.d('export loop as audio file selected')
+end
+
 function remaps:hotkeys(maps)
 	local keys = {}
 	table.insert(keys, hs.hotkey.new(maps.togglePianoKeys[1], maps.togglePianoKeys[2], remaps.togglePianoKeys))
@@ -86,6 +96,8 @@ function remaps:hotkeys(maps)
 		hs.hotkey.new(maps.toggleRegrooveMixer[1], maps.toggleRegrooveMixer[2], remaps.toggleRegrooveMixer))
 	table.insert(keys, hs.hotkey.new(maps.toggleBrowser[1], maps.toggleBrowser[2], remaps.toggleBrowser))
 	table.insert(keys, hs.hotkey.new(maps.record[1], maps.record[2], remaps.record))
+	table.insert(keys, hs.hotkey.new(maps.exportSong[1], maps.exportSong[2], remaps.exportSong))
+	table.insert(keys, hs.hotkey.new(maps.exportLoop[1], maps.exportLoop[2], remaps.exportLoop))
 	return keys
 end
 
