@@ -10,9 +10,9 @@ mouseActions.eventtap = hs.eventtap.new(
 		local buttonNumber = tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties.mouseEventButtonNumber)))
 
 		if buttonNumber == 4 then
-			if event:getFlags()["cmd"] then
+			if event:getFlags()['cmd'] then
 				log.d('mouse5: cmd+delete')
-				hs.eventtap.event.newKeyEvent(hs.keycodes.map.delete, true):setFlags({ ["cmd"] = true }):post()
+				hs.eventtap.event.newKeyEvent(hs.keycodes.map.delete, true):setFlags({ ['cmd'] = true }):post()
 				return true
 			else
 				log.d('mouse5: delete')

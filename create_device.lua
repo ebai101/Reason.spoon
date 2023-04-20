@@ -29,9 +29,9 @@ function createDevice:select(choice)
 	-- writes the updated frequency data to createDevice.freqFile
 
 	if choice then
-		if choice["menuSelector"] == nil then
+		if choice['menuSelector'] == nil then
 			-- open preset
-			local openFilename = choice["subText"]
+			local openFilename = choice['subText']
 			local openCommand = string.format('open -a Reason\\ 12 "%s"', openFilename)
 			log.d(openCommand)
 			hs.execute(openCommand)
@@ -84,10 +84,10 @@ local function rebuildPresets()
 	local presets = {}
 
 	for line in string.gmatch(command, '[^\r\n]+') do
-		local name = line:match("^.+/(.+)$")
+		local name = line:match('^.+/(.+)$')
 		table.insert(presets, {
-			["text"] = name,
-			["subText"] = line,
+			['text'] = name,
+			['subText'] = line,
 		})
 	end
 
@@ -119,13 +119,13 @@ local function rebuildDevices()
 						local title = submenu[k]['AXTitle']
 						log.d(title)
 						table.insert(devices, {
-							["text"] = title,
-							["subText"] = string.format('%s - %s',
+							['text'] = title,
+							['subText'] = string.format('%s - %s',
 								menus[i]['AXTitle'],
 								subtitle
 							),
-							["menuSelector"] = {
-								"Create",
+							['menuSelector'] = {
+								'Create',
 								menus[i]['AXTitle'],
 								subtitle,
 								submenu[k]['AXTitle'],
@@ -143,10 +143,10 @@ local function rebuildDevices()
 			local title = menus[10]['AXChildren'][1][i]['AXTitle']
 			log.d(title)
 			table.insert(devices, {
-				["text"] = title,
-				["subText"] = "Players",
-				["menuSelector"] = {
-					"Create", "Players",
+				['text'] = title,
+				['subText'] = 'Players',
+				['menuSelector'] = {
+					'Create', 'Players',
 					title,
 				}
 			})

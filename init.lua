@@ -8,11 +8,11 @@ local reason = {}
 reason.__index = reason
 
 -- Metadata
-reason.name = "reason config"
-reason.version = "0.1.0"
-reason.author = "Ethan Bailey <ebailey256@gmail.com>"
-reason.homepage = "https://github.com/ebai101/Reason.spoon"
-reason.license = "MIT - https://opensource.org/licenses/MIT"
+reason.name = 'reason config'
+reason.version = '0.1.0'
+reason.author = 'Ethan Bailey <ebailey256@gmail.com>'
+reason.homepage = 'https://github.com/ebai101/Reason.spoon'
+reason.license = 'MIT - https://opensource.org/licenses/MIT'
 
 reason.spoonPath = hs.spoons.scriptPath()
 reason.createDevice = dofile(reason.spoonPath .. 'create_device.lua')
