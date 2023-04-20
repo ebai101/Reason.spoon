@@ -14,10 +14,9 @@ reason.author = 'Ethan Bailey <ebailey256@gmail.com>'
 reason.homepage = 'https://github.com/ebai101/Reason.spoon'
 reason.license = 'MIT - https://opensource.org/licenses/MIT'
 
-reason.spoonPath = hs.spoons.scriptPath()
-reason.createDevice = dofile(reason.spoonPath .. 'create_device.lua')
-reason.globalMaps = dofile(reason.spoonPath .. 'global_maps.lua')
-reason.defaultKeys = dofile(reason.spoonPath .. 'default_keys.lua')
+reason.createDevice = dofile(hs.spoons.scriptPath() .. 'create_device.lua')
+reason.globalMaps = dofile(hs.spoons.scriptPath() .. 'global_maps.lua')
+reason.defaultKeys = dofile(hs.spoons.scriptPath() .. 'default_keys.lua')
 
 local log = hs.logger.new('reason', 'debug')
 
