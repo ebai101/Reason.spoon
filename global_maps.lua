@@ -65,8 +65,11 @@ function globalMaps:togglePianoKeys(m)
 			local kbWindow = hs.window('Piano Keys')
 			local w = kbWindow:frame()
 			local s = hs.screen.mainScreen():frame()
-			kbWindow:setFrameInScreenBounds(hs.geometry.rect(s.x, s.h, w.w, w.h))
+			local p = hs.geometry.rect(s.x, s.y + s.h - w.h)
+			kbWindow:setTopLeft(p)
 			log.d('piano keys activated')
+			log.d(s)
+			log.d(p)
 		else
 			app:selectMenuItem({ 'Window', 'Hide On-screen Piano Keys' })
 			log.d('piano keys deactivated')
@@ -87,15 +90,19 @@ function globalMaps:toggleToolWindow(m)
 			globalMaps.toolWindowActive = not globalMaps.toolWindowActive
 		end
 
-		local toolWindow = hs.window('Tool Window')
+		local toolWindow = app:getWindow('Tool Window')
 		if globalMaps.toolWindowActive then -- if tool window *should be* moved
 			local m = hs.mouse.absolutePosition()
-			toolWindow:setTopLeft(hs.geometry.point(m.x - 125, m.y - 210))
+			local p = hs.geometry.point(m.x - 125, m.y - 210)
+			toolWindow:setTopLeft(p)
 			log.d('tool window activated')
 		else
-			local s = hs.screen.mainScreen():frame()
-			toolWindow:setTopLeft(s.x + s.w, s.y + s.h)
+			local s = hs.screen.mainScreen():absoluteToLocal(hs.screen.mainScreen():frame())
+			local p = hs.geometry.point(s.w, s.y + s.h)
+			toolWindow:setTopLeft(p)
 			log.d('tool window deactivated')
+			log.d('screen frame: ' .. tostring(s))
+			log.d('window point: ' .. tostring(p))
 		end
 	end)
 end
