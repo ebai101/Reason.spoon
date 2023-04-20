@@ -78,13 +78,18 @@ function remaps:record()
 end
 
 function remaps:exportSong()
-	app:selectMenuItem('Export Song as Audio File...')
+	app:selectMenuItem({ 'File', 'Export Song as Audio File…' })
 	log.d('export song as audio file selected')
 end
 
 function remaps:exportLoop()
-	app:selectMenuItem('Export Loop as Audio File...')
+	app:selectMenuItem({ 'File', 'Export Loop as Audio File…' })
 	log.d('export loop as audio file selected')
+end
+
+function remaps:bounceMixerChannels()
+	app:selectMenuItem({ 'File', 'Bounce Mixer Channels…' })
+	log.d('bounce mixer channels selected')
 end
 
 function remaps:hotkeys(maps)
@@ -98,6 +103,8 @@ function remaps:hotkeys(maps)
 	table.insert(keys, hs.hotkey.new(maps.record[1], maps.record[2], remaps.record))
 	table.insert(keys, hs.hotkey.new(maps.exportSong[1], maps.exportSong[2], remaps.exportSong))
 	table.insert(keys, hs.hotkey.new(maps.exportLoop[1], maps.exportLoop[2], remaps.exportLoop))
+	table.insert(keys,
+		hs.hotkey.new(maps.bounceMixerChannels[1], maps.bounceMixerChannels[2], remaps.bounceMixerChannels))
 	return keys
 end
 
