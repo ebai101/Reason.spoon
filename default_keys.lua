@@ -17,6 +17,8 @@ return {
 	bounceMixerChannels = { { 'ctrl' }, 'b' },
 	color = { { 'ctrl', 'cmd' }, 'c' },
 	createMixChannel = { { 'cmd', 'shift' }, 't' },
+	copySettings = { { 'ctrl' }, 'c' },
+	pasteSettings = { { 'ctrl' }, 'v' },
 	-- rack
 	autoRoute = { { 'alt' }, 'a' },
 	browsePatches = { { 'alt' }, 'f' },
