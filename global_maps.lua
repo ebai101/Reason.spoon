@@ -194,7 +194,7 @@ function globalMaps:copySettings(m)
 		else
 			globalMaps.copyPatch = false
 			globalMaps.copySettingsMode:enter()
-			globalMaps.copySettingsAlertUUID = hs.alert('1\tall\n2\tinserts\n3\tEQ/filters\n4\tsends\n5\tdynamics')
+			globalMaps.copySettingsAlertUUID = hs.alert('1\tall\n2\tinserts\n3\tEQ/filters\n4\tsends\n5\tdynamics', '')
 		end
 	end)
 end
