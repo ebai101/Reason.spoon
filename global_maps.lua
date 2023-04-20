@@ -19,7 +19,6 @@ function globalMaps:bindHotkeys(maps)
 	table.insert(globalMaps.hotkeys, globalMaps:exportSong(maps))
 	table.insert(globalMaps.hotkeys, globalMaps:exportLoop(maps))
 	table.insert(globalMaps.hotkeys, globalMaps:bounceMixerChannels(maps))
-	-- table.insert(globalMaps.hotkeys, globalMaps:color(maps))
 end
 
 function globalMaps:activate()
@@ -168,14 +167,6 @@ function globalMaps:bounceMixerChannels(m)
 	return hs.hotkey.new(m.bounceMixerChannels[1], m.bounceMixerChannels[2], function()
 		app:selectMenuItem({ 'File', 'Bounce Mixer Channels…' })
 		log.d('bounce mixer channels selected')
-	end)
-end
-
-function globalMaps:color(m)
-	-- chooser with all possible colors
-	-- applies clip color, track color or channel color
-	return hs.hotkey.new(m.color[1], m.color[2], function()
-		log.d(hs.inspect(hs.appfinder.appFromName('Reason'):getMenuItems()[3]['AXChildren'][1][21]))
 	end)
 end
 

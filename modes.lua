@@ -24,13 +24,10 @@ function modes:activate()
 	for _, v in pairs(modes.hotkeys) do v:enable() end
 	if modes.activeMode == 'mixer' then
 		modes.mixer:activate()
-		return
 	elseif modes.activeMode == 'rack' then
 		modes.rack:activate()
-		return
 	elseif modes.activeMode == 'sequencer' then
 		modes.sequencer:activate()
-		return
 	end
 end
 
