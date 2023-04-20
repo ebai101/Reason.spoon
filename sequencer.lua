@@ -11,7 +11,7 @@ sequencer.colorPicker = dofile(hs.spoons.scriptPath() .. 'color_picker.lua')
 
 function sequencer:bindHotkeys(maps)
 	table.insert(sequencer.hotkeys, sequencer:bounceClip(maps))
-	-- table.insert(sequencer.hotkeys, sequencer:flatten(maps))
+	table.insert(sequencer.hotkeys, sequencer:flatten(maps))
 	table.insert(sequencer.hotkeys, sequencer:joinClips(maps))
 	table.insert(sequencer.hotkeys, sequencer:doubleTempo(maps))
 	table.insert(sequencer.hotkeys, sequencer:halfTempo(maps))
@@ -66,7 +66,12 @@ end
 
 function sequencer:flatten(m)
 	return hs.hotkey.new(m.flatten[1], m.flatten[2], function()
-		log.d('flatten')
+		app:selectMenuItem({ 'Edit', 'Disable Stretch' })
+		app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clips to New Recordings' })
+		app:selectMenuItem({ 'Edit', 'Bounce', 'Enable Stretch' })
+		local ok = app:selectMenuItem({ 'Edit', 'Delete Unused Recordings' })
+		-- todo: click delete dialog
+		log.d('flattened clips')
 	end)
 end
 
