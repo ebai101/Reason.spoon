@@ -14,10 +14,11 @@ reason.author = "Ethan Bailey <ebailey256@gmail.com>"
 reason.homepage = "https://github.com/ebai101/Reason.spoon"
 reason.license = "MIT - https://opensource.org/licenses/MIT"
 
-reason.hotkeys = {}
 reason.spoonPath = hs.spoons.scriptPath()
 reason.createDevice = dofile(reason.spoonPath .. 'create_device.lua')
 reason.mouseActions = dofile(reason.spoonPath .. 'mouse_actions.lua')
+reason.remaps = dofile(reason.spoonPath .. 'remaps.lua')
+reason.defaultKeys = dofile(reason.spoonPath .. 'default_keys.lua')
 
 local log = hs.logger.new('reason', 'debug')
 
@@ -54,6 +55,8 @@ local function loadModuleHotkeys(module, maps)
 end
 
 function reason:bindHotkeys(maps)
+    reason.hotkeys = {}
+    loadModuleHotkeys(reason.remaps, maps)
     loadModuleHotkeys(reason.createDevice, maps)
 end
 
