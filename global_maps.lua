@@ -19,6 +19,16 @@ function globalMaps:bindHotkeys(maps)
 	table.insert(globalMaps.hotkeys, globalMaps:exportSong(maps))
 	table.insert(globalMaps.hotkeys, globalMaps:exportLoop(maps))
 	table.insert(globalMaps.hotkeys, globalMaps:bounceMixerChannels(maps))
+
+	globalMaps.copySettingsMode = hs.hotkey.modal.new()
+	globalMaps.copySettingsMode:bind({}, '1', globalMaps.copySettingsAll)
+	globalMaps.copySettingsMode:bind({}, '2', globalMaps.copySettingsInserts)
+	globalMaps.copySettingsMode:bind({}, '3', globalMaps.copySettingsEQ)
+	globalMaps.copySettingsMode:bind({}, '4', globalMaps.copySettingsSends)
+	globalMaps.copySettingsMode:bind({}, '5', globalMaps.copySettingsDynamics)
+	globalMaps.copySettingsMode:bind({}, 'escape', globalMaps.copySettingsExit)
+	table.insert(globalMaps.hotkeys, globalMaps:copySettings(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:pasteSettings(maps))
 end
 
 function globalMaps:activate()
@@ -29,6 +39,7 @@ end
 function globalMaps:deactivate()
 	for _, v in pairs(globalMaps.hotkeys) do v:disable() end
 	globalMaps.eventtap:stop()
+	globalMaps.copySettingsMode:exit()
 end
 
 -----------
@@ -168,6 +179,78 @@ function globalMaps:bounceMixerChannels(m)
 		app:selectMenuItem({ 'File', 'Bounce Mixer Channels…' })
 		log.d('bounce mixer channels selected')
 	end)
+end
+
+-------------------------
+-- copy/paste settings --
+-------------------------
+
+function globalMaps:copySettings(m)
+	return hs.hotkey.new(m.copySettings[1], m.copySettings[2], function()
+		local ok = app:selectMenuItem({ 'Edit', 'Copy Patch' })
+		if ok then
+			globalMaps.copyPatch = true
+			log.d('copied patch')
+		else
+			globalMaps.copyPatch = false
+			globalMaps.copySettingsMode:enter()
+			globalMaps.copySettingsAlertUUID = hs.alert('1\tall\n2\tinserts\n3\tEQ/filters\n4\tsends\n5\tdynamics')
+		end
+	end)
+end
+
+function globalMaps:pasteSettings(m)
+	return hs.hotkey.new(m.pasteSettings[1], m.pasteSettings[2], function()
+		if globalMaps.copyPatch then
+			app:selectMenuItem({ 'Edit', 'Paste Patch' })
+			log.d('pasted patch')
+		else
+			if globalMaps.copySettingsType == 'Filters and EQ' then
+				globalMaps.copySettingsType = 'EQ'
+			elseif globalMaps.copySettingsType == 'FX Sends' then
+				globalMaps.copySettingsType = 'Sends'
+			end
+			app:selectMenuItem({ 'Edit', 'Paste Channel Settings: ' .. globalMaps.copySettingsType })
+			log.d('pasted ' .. globalMaps.copySettingsType)
+		end
+	end)
+end
+
+local function _copySettings()
+	app:selectMenuItem({ 'Edit', 'Copy Channel Settings', globalMaps.copySettingsType })
+	globalMaps.copySettingsMode:exit()
+	hs.alert.closeSpecific(globalMaps.copySettingsAlertUUID)
+	log.d('copied ' .. globalMaps.copySettingsType)
+end
+
+function globalMaps:copySettingsAll()
+	globalMaps.copySettingsType = 'All'
+	_copySettings()
+end
+
+function globalMaps:copySettingsInserts()
+	globalMaps.copySettingsType = 'Insert FX'
+	_copySettings()
+end
+
+function globalMaps:copySettingsEQ()
+	globalMaps.copySettingsType = 'Filters and EQ'
+	_copySettings()
+end
+
+function globalMaps:copySettingsSends()
+	globalMaps.copySettingsType = 'FX Sends'
+	_copySettings()
+end
+
+function globalMaps:copySettingsDynamics()
+	globalMaps.copySettingsType = 'Dynamics'
+	_copySettings()
+end
+
+function globalMaps:copySettingsExit()
+	globalMaps.copySettingsMode:exit()
+	hs.alert.closeSpecific(globalMaps.copySettingsAlertUUID)
 end
 
 return globalMaps
