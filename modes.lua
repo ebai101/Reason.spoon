@@ -5,6 +5,7 @@ modes.hotkeys = {}
 modes.mixer = dofile(hs.spoons.scriptPath() .. 'mixer.lua')
 modes.rack = dofile(hs.spoons.scriptPath() .. 'rack.lua')
 modes.sequencer = dofile(hs.spoons.scriptPath() .. 'sequencer.lua')
+modes.activeMode = 'mixer'
 
 -----------
 -- setup --
@@ -21,10 +22,23 @@ end
 
 function modes:activate()
 	for _, v in pairs(modes.hotkeys) do v:enable() end
+	if modes.activeMode == 'mixer' then
+		modes.mixer:activate()
+		return
+	elseif modes.activeMode == 'rack' then
+		modes.rack:activate()
+		return
+	elseif modes.activeMode == 'sequencer' then
+		modes.sequencer:activate()
+		return
+	end
 end
 
 function modes:deactivate()
 	for _, v in pairs(modes.hotkeys) do v:disable() end
+	modes.mixer:deactivate()
+	modes.rack:deactivate()
+	modes.sequencer:deactivate()
 end
 
 --------------
@@ -37,6 +51,7 @@ function modes:toggleMixer(m)
 		modes.mixer:activate()
 		modes.rack:deactivate()
 		modes.sequencer:deactivate()
+		modes.activeMode = 'mixer'
 	end)
 end
 
@@ -46,6 +61,7 @@ function modes:toggleRack(m)
 		modes.mixer:deactivate()
 		modes.rack:activate()
 		modes.sequencer:deactivate()
+		modes.activeMode = 'rack'
 	end)
 end
 
@@ -55,6 +71,7 @@ function modes:toggleSequencer(m)
 		modes.mixer:deactivate()
 		modes.rack:deactivate()
 		modes.sequencer:activate()
+		modes.activeMode = 'sequencer'
 	end)
 end
 

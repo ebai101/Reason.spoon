@@ -125,6 +125,7 @@ end
 function sequencer:toggleLoop(m)
 	return hs.hotkey.new(m.toggleLoop[1], m.toggleLoop[2], function()
 		hs.eventtap.event.newKeyEvent('l', true):post()
+		hs.eventtap.event.newKeyEvent('l', false):post()
 		log.d('toggled loop')
 	end)
 end
