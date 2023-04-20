@@ -1,5 +1,6 @@
 local createDevice = {}
 local log = hs.logger.new('createDev', 'debug')
+local app = hs.appfinder.appFromName('Reason')
 
 createDevice.hotkeys = {}
 createDevice.dataFile = 'bce_data.json'
@@ -49,30 +50,28 @@ function createDevice:select(choice)
 	-- creates an instance of the selected device/preset
 	-- writes the updated frequency data to createDevice.freqFile
 
-	if choice then
-		if choice['menuSelector'] == nil then
-			-- open preset
-			local openFilename = choice['subText']
-			local openCommand = string.format('open -a Reason\\ 12 "%s"', openFilename)
-			log.d(openCommand)
-			hs.execute(openCommand)
-		else
-			-- create device
-			local app = hs.appfinder.appFromName('Reason')
-			log.d(string.format('selected %s', choice['text']))
-			app:selectMenuItem(choice['menuSelector'])
-		end
-
-		if createDevice.freqData[choice['text']] == nil then
-			createDevice.freqData[choice['text']] = 0
-		else
-			createDevice.freqData[choice['text']] = createDevice.freqData[choice['text']] + 1
-		end
-
-		-- write freq data. also writes to bce_data.json since createDeviceRefresh() is called
-		hs.json.write(createDevice.freqData, createDevice.freqFile, true, true)
-		createDevice:refresh()
+	if not choice then return end
+	if choice['menuSelector'] == nil then
+		-- open preset
+		local openFilename = choice['subText']
+		local openCommand = string.format('open -a Reason\\ 12 "%s"', openFilename)
+		log.d(openCommand)
+		hs.execute(openCommand)
+	else
+		-- create device
+		log.d(string.format('selected %s', choice['text']))
+		app:selectMenuItem(choice['menuSelector'])
 	end
+
+	if createDevice.freqData[choice['text']] == nil then
+		createDevice.freqData[choice['text']] = 0
+	else
+		createDevice.freqData[choice['text']] = createDevice.freqData[choice['text']] + 1
+	end
+
+	-- write freq data. also writes to bce_data.json since createDeviceRefresh() is called
+	hs.json.write(createDevice.freqData, createDevice.freqFile, true, true)
+	createDevice:refresh()
 end
 
 function createDevice:refresh()
@@ -118,7 +117,6 @@ end
 local function rebuildDevices()
 	-- rebuilds the device database by scraping the menus
 
-	local app = hs.appfinder.appFromName('Reason')
 	local devices = {}
 
 	if app:getMenuItems() == nil then return devices end -- quit if no menus are up yet

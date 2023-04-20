@@ -3,6 +3,7 @@ local log = hs.logger.new('sequencer', 'debug')
 local app = hs.appfinder.appFromName('Reason')
 
 sequencer.hotkeys = {}
+sequencer.colorPicker = dofile(hs.spoons.scriptPath() .. 'color_picker.lua')
 
 -----------
 -- setup --
@@ -19,6 +20,7 @@ function sequencer:bindHotkeys(maps)
 	table.insert(sequencer.hotkeys, sequencer:reverse(maps))
 	table.insert(sequencer.hotkeys, sequencer:setLoopAndPlay(maps))
 	table.insert(sequencer.hotkeys, sequencer:toggleLoop(maps))
+	table.insert(sequencer.hotkeys, sequencer:color(maps))
 end
 
 function sequencer:activate()
@@ -124,6 +126,14 @@ function sequencer:toggleLoop(m)
 	return hs.hotkey.new(m.toggleLoop[1], m.toggleLoop[2], function()
 		hs.eventtap.event.newKeyEvent('l', true):post()
 		log.d('toggled loop')
+	end)
+end
+
+function sequencer:color(m)
+	return hs.hotkey.new(m.color[1], m.color[2], function()
+		local picker = sequencer.colorPicker:setup('Track Color')
+		sequencer.colorPicker:show()
+		log.d('showing sequencer device color picker')
 	end)
 end
 

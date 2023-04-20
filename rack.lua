@@ -3,6 +3,7 @@ local log = hs.logger.new('rack', 'debug')
 local app = hs.appfinder.appFromName('Reason')
 
 rack.hotkeys = {}
+rack.colorPicker = dofile(hs.spoons.scriptPath() .. 'color_picker.lua')
 
 -----------
 -- setup --
@@ -14,6 +15,7 @@ function rack:bindHotkeys(maps)
 	table.insert(rack.hotkeys, rack:browsePatches(maps))
 	table.insert(rack.hotkeys, rack:disconnectDevice(maps))
 	table.insert(rack.hotkeys, rack:resetDevice(maps))
+	table.insert(rack.hotkeys, rack:createMixChannel(maps))
 	table.insert(rack.hotkeys, rack:combine(maps))
 end
 
@@ -58,6 +60,13 @@ function rack:resetDevice(m)
 	end)
 end
 
+function rack:createMixChannel(m)
+	return hs.hotkey.new(m.createMixChannel[1], m.createMixChannel[2], function()
+		app:selectMenuItem({ 'Create', 'Create Mix Channel' })
+		log.d('created mix channel')
+	end)
+end
+
 function rack:combine(m)
 	return hs.hotkey.new(m.combine[1], m.combine[2], function()
 		local ok = app:findMenuItem({ 'Edit', 'Combine' })
@@ -73,7 +82,9 @@ end
 
 function rack:color(m)
 	return hs.hotkey.new(m.color[1], m.color[2], function()
-		log.d('rack device color')
+		local picker = rack.colorPicker:setup('Track Color')
+		rack.colorPicker:show()
+		log.d('showing rack device color picker')
 	end)
 end
 
