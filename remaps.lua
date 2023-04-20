@@ -72,6 +72,11 @@ function remaps:toggleBrowser()
 	end
 end
 
+function remaps:record()
+	hs.eventtap.event.newKeyEvent('return', true):setFlags({ ['cmd'] = true }):post()
+	log.d('record')
+end
+
 function remaps:hotkeys(maps)
 	local keys = {}
 	table.insert(keys, hs.hotkey.new(maps.togglePianoKeys[1], maps.togglePianoKeys[2], remaps.togglePianoKeys))
@@ -80,6 +85,7 @@ function remaps:hotkeys(maps)
 	table.insert(keys,
 		hs.hotkey.new(maps.toggleRegrooveMixer[1], maps.toggleRegrooveMixer[2], remaps.toggleRegrooveMixer))
 	table.insert(keys, hs.hotkey.new(maps.toggleBrowser[1], maps.toggleBrowser[2], remaps.toggleBrowser))
+	table.insert(keys, hs.hotkey.new(maps.record[1], maps.record[2], remaps.record))
 	return keys
 end
 

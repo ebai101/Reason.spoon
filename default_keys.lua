@@ -5,4 +5,5 @@ return {
 	toggleSpectrumEQ = { { 'ctrl' }, 's' },
 	toggleRegrooveMixer = { { 'ctrl' }, 'r' },
 	toggleBrowser = { { 'ctrl' }, 'f' },
+	record = { { 'ctrl' }, 'space' },
 }
