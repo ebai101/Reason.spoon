@@ -1,4 +1,5 @@
 local modes = {}
+local app = hs.appfinder.appFromName('Reason')
 
 modes.hotkeys = {}
 modes.mixer = dofile(hs.spoons.scriptPath() .. 'mixer.lua')
@@ -32,6 +33,7 @@ end
 
 function modes:toggleMixer(m)
 	return hs.hotkey.new(m.toggleMixer[1], m.toggleMixer[2], function()
+		app:selectMenuItem({ 'Window', 'View Main Mixer' })
 		modes.mixer:activate()
 		modes.rack:deactivate()
 		modes.sequencer:deactivate()
@@ -40,6 +42,7 @@ end
 
 function modes:toggleRack(m)
 	return hs.hotkey.new(m.toggleRack[1], m.toggleRack[2], function()
+		app:selectMenuItem({ 'Window', 'View Racks' })
 		modes.mixer:deactivate()
 		modes.rack:activate()
 		modes.sequencer:deactivate()
@@ -48,6 +51,7 @@ end
 
 function modes:toggleSequencer(m)
 	return hs.hotkey.new(m.toggleSequencer[1], m.toggleSequencer[2], function()
+		app:selectMenuItem({ 'Window', 'View Sequencer' })
 		modes.mixer:deactivate()
 		modes.rack:deactivate()
 		modes.sequencer:activate()

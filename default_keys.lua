@@ -18,10 +18,10 @@ return {
 	color = { { 'ctrl', 'cmd' }, 'c' },
 	createMixChannel = { { 'cmd', 'shift' }, 't' },
 	-- rack
-	autoRoute = { { 'alt' }, 's' },
+	autoRoute = { { 'alt' }, 'a' },
 	browsePatches = { { 'alt' }, 'f' },
 	disconnectDevice = { { 'alt' }, 'd' },
-	resetDevice = { { 'alt' }, 'a' },
+	resetDevice = { { 'alt' }, 'r' },
 	combine = { { 'ctrl' }, 'g' },
 	-- sequencer
 	bounceClip = { { 'ctrl', 'cmd' }, 'b' },

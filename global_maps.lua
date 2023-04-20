@@ -39,12 +39,10 @@ end
 local function mouse5(event)
 	if event:getFlags()['cmd'] then
 		log.d('mouse5: cmd+delete')
-		hs.eventtap.event.newKeyEvent(hs.keycodes.map.delete, true):setFlags({ ['cmd'] = true }):post()
-		return true
+		hs.eventtap.event.newKeyEvent('delete', true):setFlags({ ['cmd'] = true }):post()
 	else
 		log.d('mouse5: delete')
-		hs.eventtap.event.newKeyEvent(hs.keycodes.map.delete, true):setFlags({}):post()
-		return true
+		hs.eventtap.event.newKeyEvent('delete', true):setFlags({}):post()
 	end
 end
 
