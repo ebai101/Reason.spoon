@@ -24,13 +24,18 @@ local log = hs.logger.new('reason', 'debug')
 
 function reason:start()
     reason.createDevice:start()
-
     reason.watcher = hs.application.watcher.new(function(appName, eventType)
         if appName == 'Reason' then
             if eventType == hs.application.watcher.activated then
-                reason:activate()
+                reason.globalMaps:activate()
+                reason.createDevice:activate()
+                reason.modes:activate()
+                log.d('reason activated')
             elseif eventType == hs.application.watcher.deactivated then
-                reason:deactivate()
+                reason.globalMaps:deactivate()
+                reason.createDevice:deactivate()
+                reason.modes:deactivate()
+                log.d('reason deactivated')
             end
         end
     end)
@@ -39,20 +44,6 @@ end
 
 function reason:stop()
     reason.watcher:stop()
-end
-
-function reason:activate()
-    log.d('reason activated')
-    reason.globalMaps:activate()
-    reason.createDevice:activate()
-    reason.modes:activate()
-end
-
-function reason:deactivate()
-    log.d('reason deactivated')
-    reason.globalMaps:deactivate()
-    reason.createDevice:deactivate()
-    reason.modes:deactivate()
 end
 
 function reason:bindHotkeys(maps)
