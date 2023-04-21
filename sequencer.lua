@@ -39,9 +39,9 @@ end
 -- mouse --
 -----------
 
---- sequencer.eventtap
---- Variable
---- An hs.eventtap that maps MOUSE4 to "M", for muting clips in the sequencer
+-- sequencer.eventtap
+-- Variable
+-- An hs.eventtap that maps MOUSE4 to "M", for muting clips in the sequencer
 sequencer.eventtap = hs.eventtap.new(
     { hs.eventtap.event.types.otherMouseUp }, function(event)
         local buttonNumber = tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties.mouseEventButtonNumber)))

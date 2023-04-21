@@ -1,6 +1,11 @@
 local colorPicker = {}
 local app = hs.appfinder.appFromName('Reason')
 
+-- colorPicker.colorList
+-- Variable
+-- A table containing all the possible colors for tracks/channels, formatted as:
+-- * name: the color name, as shown in the menus
+-- * hex: the hex color representation of the track color
 colorPicker.colorList = {
     {
         name = 'Burgundy',
@@ -132,6 +137,12 @@ colorPicker.colorList = {
     },
 }
 
+-- colorPicker:setup(type)
+-- Method
+-- Sets up this instance of the colorPicker
+--
+-- Parameters:
+-- * type - A string containing the type of color to be applied, can be either "Track Color" or "Channel color"
 function colorPicker:setup(type)
     self.type = type
     self.chooser = hs.chooser.new(function(choice)
@@ -149,10 +160,19 @@ function colorPicker:setup(type)
     end)
 end
 
+-- colorPicker:show()
+-- Method
+-- Shows this colorPicker's chooser
 function colorPicker:show()
     self.chooser:show()
 end
 
+-- colorPicker:select(choice)
+-- Method
+-- Changes the color of the selected track/channel to choice
+--
+-- Parameters:
+-- * choice - A choice from the chooser's choices table
 function colorPicker:select(choice)
     if not choice then return end
     local color = choice['text']:getString()

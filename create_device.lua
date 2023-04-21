@@ -34,10 +34,11 @@ end
 -- implementation --
 --------------------
 
+-- createDevice:show()
+-- Method
+-- Shows the device chooser
+-- If the device chooser is already active (double press) then it calls createDevice:rebuild()
 function createDevice:show()
-    -- shows the device chooser
-    -- triggers a rebuild on double press
-
     if createDevice.chooser:isVisible() then
         createDevice:rebuild()
     else
@@ -46,10 +47,14 @@ function createDevice:show()
     end
 end
 
+-- createDevice:select(choice)
+-- Method
+-- Creates an instance of the selected device/preset
+-- Writes the updated frequency data to createDevice.freqFile
+--
+-- Parameters:
+-- * choice - A choice from the chooser's choices table
 function createDevice:select(choice)
-    -- creates an instance of the selected device/preset
-    -- writes the updated frequency data to createDevice.freqFile
-
     if not choice then return end
     if choice['menuSelector'] == nil then
         -- open preset
@@ -74,10 +79,11 @@ function createDevice:select(choice)
     createDevice:refresh()
 end
 
+-- createDevice:refresh()
+-- Method
+-- Sorts the device table using the frequency data from createDevice.freqData
+-- Writes the list of devices to createDevice.dataFile
 function createDevice:refresh()
-    -- sorts the device table by the frequency data in bce_freq.json
-    -- writes the list of choices to createDevice.dataFile
-
     table.sort(createDevice.deviceData, function(left, right)
         if createDevice.freqData[left['text']] == nil then
             createDevice.freqData[left['text']] = 0
@@ -175,6 +181,11 @@ local function rebuildDevices()
     return devices
 end
 
+-- createDevice:rebuild()
+-- Method
+-- Rebuilds the device list
+-- Scrapes the Create menus for available devices
+-- Also scans preset directories for available presets
 function createDevice:rebuild()
     -- update table and refresh
     local newData = {}

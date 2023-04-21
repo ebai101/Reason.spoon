@@ -46,9 +46,9 @@ end
 -- mouse --
 -----------
 
---- globalMaps.eventtap
---- Variable
---- An hs.eventtap that maps MOUSE5 and cmd+MOUSE5 to Delete and cmd+Delete
+-- globalMaps.eventtap
+-- Variable
+-- An hs.eventtap that maps MOUSE5 and cmd+MOUSE5 to Delete and cmd+Delete
 globalMaps.eventtap = hs.eventtap.new(
     { hs.eventtap.event.types.otherMouseUp }, function(event)
         local buttonNumber = tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties.mouseEventButtonNumber)))
