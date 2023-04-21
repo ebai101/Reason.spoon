@@ -1,3 +1,7 @@
+-- defaultKeys
+-- Variable
+-- A set of opinionated defaults for the spoon
+-- These can be overwritten by the user in init.lua before calling Reason:bindHotkeys()
 return {
     -- modes
     toggleMixer = { { 'ctrl' }, 'q' },
