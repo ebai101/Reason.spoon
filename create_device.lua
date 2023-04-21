@@ -128,7 +128,7 @@ function createDevice:_rebuildDevices()
     for i = 7, 9 do
         local foundSubmenu = false
         for j = 1, #menus[i]['AXChildren'][1] do
-            -- iterate until we find Built-in Devices
+            -- iterate until we find Reason Studios
             local subtitle = menus[i]['AXChildren'][1][j]['AXTitle']
             log.d(subtitle)
             if subtitle == 'Reason Studios' then foundSubmenu = true end

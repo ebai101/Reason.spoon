@@ -108,9 +108,6 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:toggleToolWindow(m)
-    -- tool window should always be open so its buttons can be accessed
-    -- to deactivated it we move it to the corner
-
     return hs.hotkey.new(m.toggleToolWindow[1], m.toggleToolWindow[2], function()
         if hs.window('Tool Window') == nil then
             log.d('tool window was closed, opening it')
