@@ -3,7 +3,7 @@ local log = hs.logger.new('sequencer', 'debug')
 local app = hs.appfinder.appFromName('Reason')
 
 sequencer.hotkeys = {}
-sequencer.colorPicker = dofile(hs.spoons.scriptPath() .. 'color_picker.lua')
+sequencer.colorPicker = dofile(hs.spoons.resourcePath('color_picker.lua'))
 
 -----------
 -- setup --

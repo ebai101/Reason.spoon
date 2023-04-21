@@ -2,9 +2,9 @@ local modes = {}
 local app = hs.appfinder.appFromName('Reason')
 
 modes.hotkeys = {}
-modes.mixer = dofile(hs.spoons.scriptPath() .. 'mixer.lua')
-modes.rack = dofile(hs.spoons.scriptPath() .. 'rack.lua')
-modes.sequencer = dofile(hs.spoons.scriptPath() .. 'sequencer.lua')
+modes.mixer = dofile(hs.spoons.resourcePath('mixer.lua'))
+modes.rack = dofile(hs.spoons.resourcePath('rack.lua'))
+modes.sequencer = dofile(hs.spoons.resourcePath('sequencer.lua'))
 modes.activeMode = 'mixer'
 
 -----------

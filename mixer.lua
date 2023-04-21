@@ -3,7 +3,7 @@ local log = hs.logger.new('mixer', 'debug')
 local app = hs.appfinder.appFromName('Reason')
 
 mixer.hotkeys = {}
-mixer.colorPicker = dofile(hs.spoons.scriptPath() .. 'color_picker.lua')
+mixer.colorPicker = dofile(hs.spoons.resourcePath('color_picker.lua'))
 
 -----------
 -- setup --
