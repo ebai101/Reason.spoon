@@ -17,7 +17,7 @@ Some other cool features include:
 hs.loadSpoon('Reason')
 
 -- Simple config with defaults
-spoon.Reason:bindHotkeys(spoon.Reason.defaultKeys)
+spoon.Reason:bindHotkeys()
 
 -- You can override binds by copying the default keybinds and modifying them
 -- See `default_keys.lua` for a full list

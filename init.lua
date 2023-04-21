@@ -47,6 +47,7 @@ function reason:stop()
 end
 
 function reason:bindHotkeys(maps)
+    maps = maps or reason.defaultKeys
     reason.globalMaps:bindHotkeys(maps)
     reason.createDevice:bindHotkeys(maps)
     reason.modes:bindHotkeys(maps)
