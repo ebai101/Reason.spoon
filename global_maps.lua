@@ -21,12 +21,12 @@ function globalMaps:bindHotkeys(maps)
     table.insert(globalMaps.hotkeys, globalMaps:bounceMixerChannels(maps))
 
     globalMaps.copySettingsMode = hs.hotkey.modal.new()
-    globalMaps.copySettingsMode:bind({}, '1', globalMaps.copySettingsAll)
-    globalMaps.copySettingsMode:bind({}, '2', globalMaps.copySettingsInserts)
-    globalMaps.copySettingsMode:bind({}, '3', globalMaps.copySettingsEQ)
-    globalMaps.copySettingsMode:bind({}, '4', globalMaps.copySettingsSends)
-    globalMaps.copySettingsMode:bind({}, '5', globalMaps.copySettingsDynamics)
-    globalMaps.copySettingsMode:bind({}, 'escape', globalMaps.copySettingsExit)
+    globalMaps.copySettingsMode:bind({}, '1', globalMaps._copySettingsAll)
+    globalMaps.copySettingsMode:bind({}, '2', globalMaps._copySettingsInserts)
+    globalMaps.copySettingsMode:bind({}, '3', globalMaps._copySettingsEQ)
+    globalMaps.copySettingsMode:bind({}, '4', globalMaps._copySettingsSends)
+    globalMaps.copySettingsMode:bind({}, '5', globalMaps._copySettingsDynamics)
+    globalMaps.copySettingsMode:bind({}, 'escape', globalMaps._copySettingsExit)
     table.insert(globalMaps.hotkeys, globalMaps:copySettings(maps))
     table.insert(globalMaps.hotkeys, globalMaps:pasteSettings(maps))
 end
@@ -46,23 +46,19 @@ end
 -- mouse --
 -----------
 
-local function mouse5(event)
-    if event:getFlags()['cmd'] then
-        log.d('mouse5: cmd+delete')
-        hs.eventtap.event.newKeyEvent('delete', true):setFlags({ ['cmd'] = true }):post()
-        hs.eventtap.event.newKeyEvent('delete', false):setFlags({ ['cmd'] = true }):post()
-    else
-        log.d('mouse5: delete')
-        hs.eventtap.event.newKeyEvent('delete', true):setFlags({}):post()
-        hs.eventtap.event.newKeyEvent('delete', false):setFlags({}):post()
-    end
-end
-
 globalMaps.eventtap = hs.eventtap.new(
     { hs.eventtap.event.types.otherMouseUp }, function(event)
         local buttonNumber = tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties.mouseEventButtonNumber)))
         if buttonNumber == 4 then
-            mouse5(event)
+            if event:getFlags()['cmd'] then
+                log.d('mouse5: cmd+delete')
+                hs.eventtap.event.newKeyEvent('delete', true):setFlags({ ['cmd'] = true }):post()
+                hs.eventtap.event.newKeyEvent('delete', false):setFlags({ ['cmd'] = true }):post()
+            else
+                log.d('mouse5: delete')
+                hs.eventtap.event.newKeyEvent('delete', true):setFlags({}):post()
+                hs.eventtap.event.newKeyEvent('delete', false):setFlags({}):post()
+            end
         end
     end)
 
@@ -322,39 +318,39 @@ function globalMaps:pasteSettings(m)
     end)
 end
 
-local function _copySettings()
+function globalMaps:_copySettings()
     app:selectMenuItem({ 'Edit', 'Copy Channel Settings', globalMaps.copySettingsType })
     globalMaps.copySettingsMode:exit()
     hs.alert.closeSpecific(globalMaps.copySettingsAlertUUID)
     log.d('copied ' .. globalMaps.copySettingsType)
 end
 
-function globalMaps:copySettingsAll()
+function globalMaps:_copySettingsAll()
     globalMaps.copySettingsType = 'All'
-    _copySettings()
+    globalMaps:_copySettings()
 end
 
-function globalMaps:copySettingsInserts()
+function globalMaps:_copySettingsInserts()
     globalMaps.copySettingsType = 'Insert FX'
-    _copySettings()
+    globalMaps:_copySettings()
 end
 
-function globalMaps:copySettingsEQ()
+function globalMaps:_copySettingsEQ()
     globalMaps.copySettingsType = 'Filters and EQ'
-    _copySettings()
+    globalMaps:_copySettings()
 end
 
-function globalMaps:copySettingsSends()
+function globalMaps:_copySettingsSends()
     globalMaps.copySettingsType = 'FX Sends'
-    _copySettings()
+    globalMaps:_copySettings()
 end
 
-function globalMaps:copySettingsDynamics()
+function globalMaps:_copySettingsDynamics()
     globalMaps.copySettingsType = 'Dynamics'
-    _copySettings()
+    globalMaps:_copySettings()
 end
 
-function globalMaps:copySettingsExit()
+function globalMaps:_copySettingsExit()
     globalMaps.copySettingsMode:exit()
     hs.alert.closeSpecific(globalMaps.copySettingsAlertUUID)
 end
