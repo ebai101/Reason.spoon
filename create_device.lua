@@ -97,9 +97,7 @@ function createDevice:refresh()
     createDevice.chooser:choices(createDevice.deviceData)
 end
 
-local function rebuildPresets()
-    -- rebuilds the preset database from the filesystem
-
+function createDevice:_rebuildPresets()
     local commandString =
     [[ /opt/homebrew/bin/fd -tf . \
     /Users/ethan/My\ Drive/PATCHES/EFFECTS \
@@ -120,9 +118,7 @@ local function rebuildPresets()
     return presets
 end
 
-local function rebuildDevices()
-    -- rebuilds the device database by scraping the menus
-
+function createDevice:_rebuildDevices()
     local devices = {}
 
     if app:getMenuItems() == nil then return devices end -- quit if no menus are up yet
@@ -191,12 +187,12 @@ function createDevice:rebuild()
     local newData = {}
 
     -- build devices
-    for _, v in pairs(createDevice:rebuildDevices()) do
+    for _, v in pairs(createDevice:_rebuildDevices()) do
         table.insert(newData, v)
     end
 
     -- build presets
-    for _, v in pairs(createDevice:rebuildPresets()) do
+    for _, v in pairs(createDevice:_rebuildPresets()) do
         table.insert(newData, v)
     end
 
