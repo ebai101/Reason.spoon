@@ -28,6 +28,16 @@ end
 -- keybinds --
 --------------
 
+-- mixer:color(m)
+-- Method
+-- Activates a colorPicker (hs.chooser) with available channel colors
+-- The selected color is then applied to the selected channels
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function mixer:color(m)
     return hs.hotkey.new(m.color[1], m.color[2], function()
         local picker = mixer.colorPicker:setup('Channel color')
@@ -36,6 +46,15 @@ function mixer:color(m)
     end)
 end
 
+-- mixer:createMixChannel(m)
+-- Method
+-- Creates a new mixer channel
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function mixer:createMixChannel(m)
     return hs.hotkey.new(m.createMixChannel[1], m.createMixChannel[2], function()
         app:selectMenuItem({ 'Create', 'Create Mix Channel' })
