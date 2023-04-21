@@ -37,6 +37,10 @@ function reason:start()
     reason.watcher:start()
 end
 
+function reason:stop()
+    reason.watcher:stop()
+end
+
 function reason:activate()
     log.d('reason activated')
     reason.globalMaps:activate()
