@@ -70,6 +70,15 @@ globalMaps.eventtap = hs.eventtap.new(
 -- keybinds --
 --------------
 
+-- globalMaps:togglePianoKeys(m)
+-- Method
+-- Toggles the onscreen piano keys and moves them to the bottom left corner of the current screen
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:togglePianoKeys(m)
     return hs.hotkey.new(m.togglePianoKeys[1], m.togglePianoKeys[2], function()
         local ok = app:selectMenuItem({ 'Window', 'Show On-screen Piano Keys' })
@@ -89,6 +98,16 @@ function globalMaps:togglePianoKeys(m)
     end)
 end
 
+-- globalMaps:toggleToolWindow(m)
+-- Method
+-- Toggles the tool window. Instead of closing it, we move it to the bottom right corner of the screen
+-- This allows script access to buttons in the tool window even when it's "closed"
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:toggleToolWindow(m)
     -- tool window should always be open so its buttons can be accessed
     -- to deactivated it we move it to the corner
@@ -119,6 +138,15 @@ function globalMaps:toggleToolWindow(m)
     end)
 end
 
+-- globalMaps:toggleSpectrumEQ(m)
+-- Method
+-- Toggles the spectrum EQ window
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:toggleSpectrumEQ(m)
     return hs.hotkey.new(m.toggleSpectrumEQ[1], m.toggleSpectrumEQ[2], function()
         local ok = app:selectMenuItem({ 'Window', 'Show Spectrum EQ Window' })
@@ -131,6 +159,15 @@ function globalMaps:toggleSpectrumEQ(m)
     end)
 end
 
+-- globalMaps:toggleRegrooveMixer(m)
+-- Method
+-- Toggles the regroove mixer
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:toggleRegrooveMixer(m)
     return hs.hotkey.new(m.toggleRegrooveMixer[1], m.toggleRegrooveMixer[2], function()
         local ok = app:selectMenuItem({ 'Window', 'Show ReGroove Mixer' })
@@ -143,6 +180,15 @@ function globalMaps:toggleRegrooveMixer(m)
     end)
 end
 
+-- globalMaps:toggleBrowser(m)
+-- Method
+-- Toggles the sidebar browser
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:toggleBrowser(m)
     return hs.hotkey.new(m.toggleBrowser[1], m.toggleBrowser[2], function()
         local ok = app:selectMenuItem({ 'Window', 'Show Browser' })
@@ -155,6 +201,15 @@ function globalMaps:toggleBrowser(m)
     end)
 end
 
+-- globalMaps:record(m)
+-- Method
+-- Enables recording and starts playback
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:record(m)
     return hs.hotkey.new(m.record[1], m.record[2], function()
         hs.eventtap.event.newKeyEvent('return', true):setFlags({ ['cmd'] = true }):post()
@@ -163,6 +218,15 @@ function globalMaps:record(m)
     end)
 end
 
+-- globalMaps:exportSong(m)
+-- Method
+-- Opens the dialog to export the song as an audio file
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:exportSong(m)
     return hs.hotkey.new(m.exportSong[1], m.exportSong[2], function()
         app:selectMenuItem({ 'File', 'Export Song as Audio File…' })
@@ -170,6 +234,15 @@ function globalMaps:exportSong(m)
     end)
 end
 
+-- globalMaps:exportLoop(m)
+-- Method
+-- Opens the dialog to export the current loop as an audio file
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:exportLoop(m)
     return hs.hotkey.new(m.exportLoop[1], m.exportLoop[2], function()
         app:selectMenuItem({ 'File', 'Export Loop as Audio File…' })
@@ -177,6 +250,15 @@ function globalMaps:exportLoop(m)
     end)
 end
 
+-- globalMaps:bounceMixerChannels(m)
+-- Method
+-- Opens the dialog to bounce mixer channels
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:bounceMixerChannels(m)
     return hs.hotkey.new(m.bounceMixerChannels[1], m.bounceMixerChannels[2], function()
         app:selectMenuItem({ 'File', 'Bounce Mixer Channels…' })
@@ -188,6 +270,18 @@ end
 -- copy/paste settings --
 -------------------------
 
+-- globalMaps:copySettings(m)
+-- Method
+-- Allows the user to copy different types of channel settings
+-- When pressed, it enters a mode with 5 different options - All, Inserts, EQ/Filters, sends, and dynamics
+-- The user selects one using the number keys 1-5, and the corresponding channel settings are copied
+-- If a device is selected that has a patch that can be copied, it copies the patch instead
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:copySettings(m)
     return hs.hotkey.new(m.copySettings[1], m.copySettings[2], function()
         local ok = app:selectMenuItem({ 'Edit', 'Copy Patch' })
@@ -202,6 +296,15 @@ function globalMaps:copySettings(m)
     end)
 end
 
+-- globalMaps:pasteSettings(m)
+-- Method
+-- Pastes the channel settings or patch that is currently copied
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:pasteSettings(m)
     return hs.hotkey.new(m.pasteSettings[1], m.pasteSettings[2], function()
         if globalMaps.copyPatch then
