@@ -122,8 +122,8 @@ function globalMaps:toggleToolWindow(m)
 
         local toolWindow = app:getWindow('Tool Window')
         if globalMaps.toolWindowActive then -- if tool window *should be* moved
-            local m = hs.mouse.absolutePosition()
-            local p = hs.geometry.point(m.x - 125, m.y - 210)
+            local mp = hs.mouse.absolutePosition()
+            local p = hs.geometry.point(mp.x - 125, mp.y - 210)
             toolWindow:setTopLeft(p)
             log.d('tool window activated')
         else
