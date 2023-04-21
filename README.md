@@ -9,6 +9,8 @@ Some other cool features include:
 - Quickly copy different types of channel settings with one keybind
 - Color your channels with one keybind using a chooser
 
+**DISCLAIMER:** This is a WIP and has only been tested on my machine. Some features may not work properly, and others definitely will not work at all.
+
 ## Example Config
 
 ```lua
