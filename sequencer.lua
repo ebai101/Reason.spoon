@@ -39,12 +39,6 @@ end
 -- mouse --
 -----------
 
-local function mouse4(event)
-    hs.eventtap.event.newKeyEvent('m', true):setFlags({}):post()
-    hs.eventtap.event.newKeyEvent('m', false):setFlags({}):post()
-    log.d('mouse4')
-end
-
 --- sequencer.eventtap
 --- Variable
 --- An hs.eventtap that maps MOUSE4 to "M", for muting clips in the sequencer
@@ -52,7 +46,9 @@ sequencer.eventtap = hs.eventtap.new(
     { hs.eventtap.event.types.otherMouseUp }, function(event)
         local buttonNumber = tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties.mouseEventButtonNumber)))
         if buttonNumber == 3 then
-            mouse4(event)
+            hs.eventtap.event.newKeyEvent('m', true):setFlags({}):post()
+            hs.eventtap.event.newKeyEvent('m', false):setFlags({}):post()
+            log.d('mouse4')
         end
     end)
 
