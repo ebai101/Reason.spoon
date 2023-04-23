@@ -179,8 +179,12 @@ function colorPicker:select(choice)
     if not choice then return end
     local color = choice['text']:getString()
     local selector = { 'Edit', self.type, color }
-    self.app:selectMenuItem(selector)
-    log.d('selected ' .. color)
+    local ok = self.app:selectMenuItem(selector)
+    if ok then
+        log.d('selected ' .. color)
+    else
+        log.d('selecting color failed')
+    end
 end
 
 return colorPicker
