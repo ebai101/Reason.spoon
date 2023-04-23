@@ -312,17 +312,25 @@ function globalMaps:pasteSettings(m)
             elseif globalMaps.copySettingsType == 'FX Sends' then
                 globalMaps.copySettingsType = 'Sends'
             end
-            app:selectMenuItem({ 'Edit', 'Paste Channel Settings: ' .. globalMaps.copySettingsType })
-            log.d('pasted ' .. globalMaps.copySettingsType)
+            local ok = app:selectMenuItem({ 'Edit', 'Paste Channel Settings: ' .. globalMaps.copySettingsType })
+            if ok then
+                log.d('pasted ' .. globalMaps.copySettingsType)
+            else
+                log.d('paste command failed')
+            end
         end
     end)
 end
 
 function globalMaps:_copySettings()
-    app:selectMenuItem({ 'Edit', 'Copy Channel Settings', globalMaps.copySettingsType })
     globalMaps.copySettingsMode:exit()
     hs.alert.closeSpecific(globalMaps.copySettingsAlertUUID)
-    log.d('copied ' .. globalMaps.copySettingsType)
+    local ok = app:selectMenuItem({ 'Edit', 'Copy Channel Settings', globalMaps.copySettingsType })
+    if ok then
+        log.d('copied ' .. globalMaps.copySettingsType)
+    else
+        log.d('copy command failed')
+    end
 end
 
 function globalMaps:_copySettingsAll()
