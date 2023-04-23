@@ -14,6 +14,7 @@ reason.author = 'Ethan Bailey <ebailey256@gmail.com>'
 reason.homepage = 'https://github.com/ebai101/Reason.spoon'
 reason.license = 'MIT - https://opensource.org/licenses/MIT'
 
+reason.appName = 'Reason'
 reason.createDevice = dofile(hs.spoons.resourcePath('create_device.lua'))
 reason.globalMaps = dofile(hs.spoons.resourcePath('global_maps.lua'))
 reason.modes = dofile(hs.spoons.resourcePath('modes.lua'))
@@ -25,11 +26,12 @@ local log = hs.logger.new('reason', 'debug')
 function reason:start()
     reason.createDevice:start()
     reason.watcher = hs.application.watcher.new(function(appName, eventType)
-        if appName == 'Reason' then
+        if appName == reason.appName then
             if eventType == hs.application.watcher.activated then
-                reason.globalMaps:activate()
-                reason.createDevice:activate()
-                reason.modes:activate()
+                local app = hs.appfinder.appFromName(appName)
+                reason.globalMaps:activate(app)
+                reason.createDevice:activate(app)
+                reason.modes:activate(app)
                 log.d('reason activated')
             elseif eventType == hs.application.watcher.deactivated then
                 reason.globalMaps:deactivate()

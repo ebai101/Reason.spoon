@@ -1,6 +1,5 @@
 local colorPicker = {}
 local log = hs.logger.new('color', 'debug')
-local app = hs.appfinder.appFromName('Reason')
 
 -- colorPicker.colorList
 -- Variable
@@ -138,14 +137,16 @@ colorPicker.colorList = {
     },
 }
 
--- colorPicker:setup(type)
+-- colorPicker:setup(app, type)
 -- Method
 -- Sets up this instance of the colorPicker
 --
 -- Parameters:
+-- * app - the Reason hs.application instance
 -- * type - A string containing the type of color to be applied, can be either "Track Color" or "Channel color"
-function colorPicker:setup(type)
+function colorPicker:setup(app, type)
     self.type = type
+    self.app = app
     self.chooser = hs.chooser.new(function(choice)
         return colorPicker:select(choice)
     end)
@@ -178,7 +179,7 @@ function colorPicker:select(choice)
     if not choice then return end
     local color = choice['text']:getString()
     local selector = { 'Edit', self.type, color }
-    app:selectMenuItem(selector)
+    self.app:selectMenuItem(selector)
     log.d('selected ' .. color)
 end
 

@@ -1,6 +1,5 @@
 local createDevice = {}
 local log = hs.logger.new('createDev', 'debug')
-local app = hs.appfinder.appFromName('Reason')
 
 createDevice.hotkeys = {}
 createDevice.dataFile = 'bce_data.json'
@@ -27,8 +26,9 @@ function createDevice:bindHotkeys(maps)
     table.insert(createDevice.hotkeys, hs.hotkey.new(maps.createDevice[1], maps.createDevice[2], createDevice.show))
 end
 
-function createDevice:activate()
+function createDevice:activate(app)
     for _, v in pairs(createDevice.hotkeys) do v:enable() end
+    createDevice.app = app
 end
 
 function createDevice:deactivate()
@@ -70,7 +70,7 @@ function createDevice:select(choice)
     else
         -- create device
         log.d(string.format('selected %s', choice['text']))
-        app:selectMenuItem(choice['menuSelector'])
+        createDevice.app:selectMenuItem(choice['menuSelector'])
     end
 
     if createDevice.freqData[choice['text']] == nil then
@@ -120,8 +120,8 @@ end
 function createDevice:_rebuildDevices()
     local devices = {}
 
-    if app:getMenuItems() == nil then return devices end -- quit if no menus are up yet
-    local menus = app:getMenuItems()[4]['AXChildren'][1] -- children of "Create" menu
+    if createDevice.app:getMenuItems() == nil then return devices end -- quit if no menus are up yet
+    local menus = createDevice.app:getMenuItems()[4]['AXChildren'][1] -- children of "Create" menu
 
     -- build Instruments, Effects, and Utilities
     for i = 7, 9 do

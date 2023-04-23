@@ -1,6 +1,5 @@
 local sequencer = {}
 local log = hs.logger.new('sequencer', 'debug')
-local app = hs.appfinder.appFromName('Reason')
 
 sequencer.hotkeys = {}
 sequencer.colorPicker = dofile(hs.spoons.resourcePath('color_picker.lua'))
@@ -23,9 +22,10 @@ function sequencer:bindHotkeys(maps)
     table.insert(sequencer.hotkeys, sequencer:color(maps))
 end
 
-function sequencer:activate()
+function sequencer:activate(app)
     for _, v in pairs(sequencer.hotkeys) do v:enable() end
     sequencer.eventtap:start()
+    sequencer.app = app
     log.d('sequencer activated')
 end
 
@@ -68,7 +68,7 @@ sequencer.eventtap = hs.eventtap.new(
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:bounceClip(m)
     return hs.hotkey.new(m.bounceClip[1], m.bounceClip[2], function()
-        app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clip to Disk…' })
+        sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clip to Disk…' })
         log.d('bouncing clip to disk')
     end)
 end
@@ -89,10 +89,10 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:flatten(m)
     return hs.hotkey.new(m.flatten[1], m.flatten[2], function()
-        app:selectMenuItem({ 'Edit', 'Disable Stretch' })
-        app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clips to New Recordings' })
-        app:selectMenuItem({ 'Edit', 'Bounce', 'Enable Stretch' })
-        local ok = app:selectMenuItem({ 'Edit', 'Delete Unused Recordings' })
+        sequencer.app:selectMenuItem({ 'Edit', 'Disable Stretch' })
+        sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clips to New Recordings' })
+        sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Enable Stretch' })
+        local ok = sequencer.app:selectMenuItem({ 'Edit', 'Delete Unused Recordings' })
         -- todo: click delete dialog
         log.d('flattened clips')
     end)
@@ -109,7 +109,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:joinClips(m)
     return hs.hotkey.new(m.joinClips[1], m.joinClips[2], function()
-        app:selectMenuItem({ 'Edit', 'Join Clips' })
+        sequencer.app:selectMenuItem({ 'Edit', 'Join Clips' })
         log.d('joined clips')
     end)
 end
@@ -176,7 +176,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:quantize(m)
     return hs.hotkey.new(m.quantize[1], m.quantize[2], function()
-        app:selectMenuItem({ 'Edit', 'Quantize' })
+        sequencer.app:selectMenuItem({ 'Edit', 'Quantize' })
         log.d('quantized')
     end)
 end
@@ -192,7 +192,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:reverse(m)
     return hs.hotkey.new(m.reverse[1], m.reverse[2], function()
-        app:selectMenuItem({ 'Edit', 'Reverse' })
+        sequencer.app:selectMenuItem({ 'Edit', 'Reverse' })
         log.d('reversed')
     end)
 end
@@ -209,7 +209,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:setLoopAndPlay(m)
     return hs.hotkey.new(m.setLoopAndPlay[1], m.setLoopAndPlay[2], function()
-        app:selectMenuItem({ 'Edit', 'Set Loop to Selection and Start Playback' })
+        sequencer.app:selectMenuItem({ 'Edit', 'Set Loop to Selection and Start Playback' })
         log.d('set loop and play')
     end)
 end
@@ -244,7 +244,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:color(m)
     return hs.hotkey.new(m.color[1], m.color[2], function()
-        local picker = sequencer.colorPicker:setup('Track Color')
+        local picker = sequencer.colorPicker:setup(sequencer.app, 'Track Color')
         sequencer.colorPicker:show()
         log.d('showing sequencer device color picker')
     end)

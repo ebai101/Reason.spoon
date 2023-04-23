@@ -1,6 +1,5 @@
 local mixer = {}
 local log = hs.logger.new('mixer', 'debug')
-local app = hs.appfinder.appFromName('Reason')
 
 mixer.hotkeys = {}
 mixer.colorPicker = dofile(hs.spoons.resourcePath('color_picker.lua'))
@@ -15,8 +14,9 @@ function mixer:bindHotkeys(maps)
     table.insert(mixer.hotkeys, mixer:resetChannelSettings(maps))
 end
 
-function mixer:activate()
+function mixer:activate(app)
     for _, v in pairs(mixer.hotkeys) do v:enable() end
+    mixer.app = app
     log.d('mixer activated')
 end
 
@@ -41,7 +41,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function mixer:color(m)
     return hs.hotkey.new(m.color[1], m.color[2], function()
-        mixer.colorPicker:setup('Channel color')
+        mixer.colorPicker:setup(mixer.app, 'Channel color')
         mixer.colorPicker:show()
         log.d('showing mixer channel color picker')
     end)
@@ -58,7 +58,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function mixer:createMixChannel(m)
     return hs.hotkey.new(m.createMixChannel[1], m.createMixChannel[2], function()
-        app:selectMenuItem({ 'Create', 'Create Mix Channel' })
+        mixer.app:selectMenuItem({ 'Create', 'Create Mix Channel' })
         log.d('created mix channel')
     end)
 end
@@ -74,7 +74,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function mixer:resetChannelSettings(m)
     return hs.hotkey.new(m.resetAllChannelSettings[1], m.resetAllChannelSettings[2], function()
-        app:selectMenuItem({ 'Edit', 'Reset All Channel Settings' })
+        mixer.app:selectMenuItem({ 'Edit', 'Reset All Channel Settings' })
         log.d('reset all channel settings')
     end)
 end

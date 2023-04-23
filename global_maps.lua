@@ -1,6 +1,5 @@
 local globalMaps = {}
 local log = hs.logger.new('global', 'debug')
-local app = hs.appfinder.appFromName('Reason')
 
 globalMaps.hotkeys = {}
 globalMaps.toolWindowActive = false
@@ -31,9 +30,10 @@ function globalMaps:bindHotkeys(maps)
     table.insert(globalMaps.hotkeys, globalMaps:pasteSettings(maps))
 end
 
-function globalMaps:activate()
+function globalMaps:activate(app)
     for _, v in pairs(globalMaps.hotkeys) do v:enable() end
     globalMaps.eventtap:start()
+    globalMaps.app = app
 end
 
 function globalMaps:deactivate()
@@ -80,7 +80,7 @@ globalMaps.eventtap = hs.eventtap.new(
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:togglePianoKeys(m)
     return hs.hotkey.new(m.togglePianoKeys[1], m.togglePianoKeys[2], function()
-        local ok = app:selectMenuItem({ 'Window', 'Show On-screen Piano Keys' })
+        local ok = globalMaps.app:selectMenuItem({ 'Window', 'Show On-screen Piano Keys' })
         if ok then
             local kbWindow = hs.window('Piano Keys')
             local w = kbWindow:frame()
@@ -91,7 +91,7 @@ function globalMaps:togglePianoKeys(m)
             log.d(s)
             log.d(p)
         else
-            app:selectMenuItem({ 'Window', 'Hide On-screen Piano Keys' })
+            globalMaps.app:selectMenuItem({ 'Window', 'Hide On-screen Piano Keys' })
             log.d('piano keys deactivated')
         end
     end)
@@ -111,13 +111,13 @@ function globalMaps:toggleToolWindow(m)
     return hs.hotkey.new(m.toggleToolWindow[1], m.toggleToolWindow[2], function()
         if hs.window('Tool Window') == nil then
             log.d('tool window was closed, opening it')
-            app:selectMenuItem({ 'Window', 'Show Tool Window' })
+            globalMaps.app:selectMenuItem({ 'Window', 'Show Tool Window' })
             globalMaps.toolWindowActive = true
         else
             globalMaps.toolWindowActive = not globalMaps.toolWindowActive
         end
 
-        local toolWindow = app:getWindow('Tool Window')
+        local toolWindow = globalMaps.app:getWindow('Tool Window')
         if globalMaps.toolWindowActive then -- if tool window *should be* moved
             local mp = hs.mouse.absolutePosition()
             local p = hs.geometry.point(mp.x - 125, mp.y - 210)
@@ -145,11 +145,11 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:toggleSpectrumEQ(m)
     return hs.hotkey.new(m.toggleSpectrumEQ[1], m.toggleSpectrumEQ[2], function()
-        local ok = app:selectMenuItem({ 'Window', 'Show Spectrum EQ Window' })
+        local ok = globalMaps.app:selectMenuItem({ 'Window', 'Show Spectrum EQ Window' })
         if ok then
             log.d('spectrum eq activated')
         else
-            app:selectMenuItem({ 'Window', 'Hide Spectrum EQ Window' })
+            globalMaps.app:selectMenuItem({ 'Window', 'Hide Spectrum EQ Window' })
             log.d('spectrum eq deactivated')
         end
     end)
@@ -166,11 +166,11 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:toggleRegrooveMixer(m)
     return hs.hotkey.new(m.toggleRegrooveMixer[1], m.toggleRegrooveMixer[2], function()
-        local ok = app:selectMenuItem({ 'Window', 'Show ReGroove Mixer' })
+        local ok = globalMaps.app:selectMenuItem({ 'Window', 'Show ReGroove Mixer' })
         if ok then
             log.d('regroove mixer activated')
         else
-            app:selectMenuItem({ 'Window', 'Hide ReGroove Mixer' })
+            globalMaps.app:selectMenuItem({ 'Window', 'Hide ReGroove Mixer' })
             log.d('regroove mixer deactivated')
         end
     end)
@@ -187,11 +187,11 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:toggleBrowser(m)
     return hs.hotkey.new(m.toggleBrowser[1], m.toggleBrowser[2], function()
-        local ok = app:selectMenuItem({ 'Window', 'Show Browser' })
+        local ok = globalMaps.app:selectMenuItem({ 'Window', 'Show Browser' })
         if ok then
             log.d('browser activated')
         else
-            app:selectMenuItem({ 'Window', 'Hide Browser' })
+            globalMaps.app:selectMenuItem({ 'Window', 'Hide Browser' })
             log.d('browser deactivated')
         end
     end)
@@ -225,7 +225,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:exportSong(m)
     return hs.hotkey.new(m.exportSong[1], m.exportSong[2], function()
-        app:selectMenuItem({ 'File', 'Export Song as Audio File…' })
+        globalMaps.app:selectMenuItem({ 'File', 'Export Song as Audio File…' })
         log.d('export song as audio file selected')
     end)
 end
@@ -241,7 +241,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:exportLoop(m)
     return hs.hotkey.new(m.exportLoop[1], m.exportLoop[2], function()
-        app:selectMenuItem({ 'File', 'Export Loop as Audio File…' })
+        globalMaps.app:selectMenuItem({ 'File', 'Export Loop as Audio File…' })
         log.d('export loop as audio file selected')
     end)
 end
@@ -257,7 +257,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:bounceMixerChannels(m)
     return hs.hotkey.new(m.bounceMixerChannels[1], m.bounceMixerChannels[2], function()
-        app:selectMenuItem({ 'File', 'Bounce Mixer Channels…' })
+        globalMaps.app:selectMenuItem({ 'File', 'Bounce Mixer Channels…' })
         log.d('bounce mixer channels selected')
     end)
 end
@@ -280,7 +280,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:copySettings(m)
     return hs.hotkey.new(m.copySettings[1], m.copySettings[2], function()
-        local ok = app:selectMenuItem({ 'Edit', 'Copy Patch' })
+        local ok = globalMaps.app:selectMenuItem({ 'Edit', 'Copy Patch' })
         if ok then
             globalMaps.copyPatch = true
             log.d('copied patch')
@@ -304,7 +304,7 @@ end
 function globalMaps:pasteSettings(m)
     return hs.hotkey.new(m.pasteSettings[1], m.pasteSettings[2], function()
         if globalMaps.copyPatch then
-            app:selectMenuItem({ 'Edit', 'Paste Patch' })
+            globalMaps.app:selectMenuItem({ 'Edit', 'Paste Patch' })
             log.d('pasted patch')
         else
             if globalMaps.copySettingsType == 'Filters and EQ' then
@@ -312,7 +312,7 @@ function globalMaps:pasteSettings(m)
             elseif globalMaps.copySettingsType == 'FX Sends' then
                 globalMaps.copySettingsType = 'Sends'
             end
-            local ok = app:selectMenuItem({ 'Edit', 'Paste Channel Settings: ' .. globalMaps.copySettingsType })
+            local ok = globalMaps.app:selectMenuItem({ 'Edit', 'Paste Channel Settings: ' .. globalMaps.copySettingsType })
             if ok then
                 log.d('pasted ' .. globalMaps.copySettingsType)
             else
@@ -325,7 +325,7 @@ end
 function globalMaps:_copySettings()
     globalMaps.copySettingsMode:exit()
     hs.alert.closeSpecific(globalMaps.copySettingsAlertUUID)
-    local ok = app:selectMenuItem({ 'Edit', 'Copy Channel Settings', globalMaps.copySettingsType })
+    local ok = globalMaps.app:selectMenuItem({ 'Edit', 'Copy Channel Settings', globalMaps.copySettingsType })
     if ok then
         log.d('copied ' .. globalMaps.copySettingsType)
     else

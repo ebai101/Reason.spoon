@@ -1,5 +1,4 @@
 local modes = {}
-local app = hs.appfinder.appFromName('Reason')
 
 modes.hotkeys = {}
 modes.mixer = dofile(hs.spoons.resourcePath('mixer.lua'))
@@ -37,14 +36,15 @@ function modes:bindHotkeys(maps)
     modes.sequencer:bindHotkeys(maps)
 end
 
-function modes:activate()
+function modes:activate(app)
+    modes.app = app
     for _, v in pairs(modes.hotkeys) do v:enable() end
     if modes.activeMode == 'mixer' then
-        modes.mixer:activate()
+        modes.mixer:activate(modes.app)
     elseif modes.activeMode == 'rack' then
-        modes.rack:activate()
+        modes.rack:activate(modes.app)
     elseif modes.activeMode == 'sequencer' then
-        modes.sequencer:activate()
+        modes.sequencer:activate(modes.app)
     end
     modes.eventtap:start()
 end
@@ -105,9 +105,9 @@ end
 
 function modes:_mixer(onlyChangeModes)
     if not onlyChangeModes then
-        app:selectMenuItem({ 'Window', 'View Main Mixer' })
+        modes.app:selectMenuItem({ 'Window', 'View Main Mixer' })
     end
-    modes.mixer:activate()
+    modes.mixer:activate(modes.app)
     modes.rack:deactivate()
     modes.sequencer:deactivate()
     modes.activeMode = 'mixer'
@@ -115,21 +115,21 @@ end
 
 function modes:_rack(onlyChangeModes)
     if not onlyChangeModes then
-        app:selectMenuItem({ 'Window', 'View Racks' })
+        modes.app:selectMenuItem({ 'Window', 'View Racks' })
     end
     modes.mixer:deactivate()
-    modes.rack:activate()
+    modes.rack:activate(modes.app)
     modes.sequencer:deactivate()
     modes.activeMode = 'rack'
 end
 
 function modes:_sequencer(onlyChangeModes)
     if not onlyChangeModes then
-        app:selectMenuItem({ 'Window', 'View Sequencer' })
+        modes.app:selectMenuItem({ 'Window', 'View Sequencer' })
     end
     modes.mixer:deactivate()
     modes.rack:deactivate()
-    modes.sequencer:activate()
+    modes.sequencer:activate(modes.app)
     modes.activeMode = 'sequencer'
 end
 
