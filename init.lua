@@ -53,4 +53,17 @@ function reason:bindHotkeys(maps)
     reason.modes:bindHotkeys(maps)
 end
 
+-- Reason:setPresetCommand()
+-- Method
+-- Sets the command used to find presets for the device chooser
+-- Any command that returns a list of files separated by newlines (e.g. find, fd) will work
+-- Note that any commands must be absolute paths, for example "/usr/bin/find" instead of "find"
+-- If this is not called, the device chooser will not have any presets
+--
+-- Parameters
+-- * presetCommand - A string containing a shell command
+function reason:setPresetCommand(presetCommand)
+    reason.createDevice:setPresetCommand(presetCommand)
+end
+
 return reason

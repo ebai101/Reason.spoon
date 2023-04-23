@@ -16,6 +16,11 @@ function createDevice:start()
     createDevice.chooser = hs.chooser.new(function(choice)
         return createDevice:select(choice)
     end)
+
+    if not createDevice.presetCommand then
+        log.i('createDevice.presetCommand is not set, no presets will be indexed')
+        log.i('consider running spoon.Reason:setPresetCommand() in your init.lua')
+    end
 end
 
 function createDevice:bindHotkeys(maps)
@@ -98,13 +103,7 @@ function createDevice:refresh()
 end
 
 function createDevice:_rebuildPresets()
-    local commandString =
-    [[ /opt/homebrew/bin/fd -tf . \
-    /Users/ethan/My\ Drive/PATCHES/EFFECTS \
-    /Users/ethan/My\ Drive/PATCHES/INSTRUMENTS \
-    /Users/ethan/My\ Drive/PATCHES/VOCALS \
-    -E "*.wav" -E "*.asd" -E "*RM-20*" -E "*.fxp" ]]
-    local command = hs.execute(commandString)
+    local command = hs.execute(createDevice.presetCommand)
     local presets = {}
 
     for line in string.gmatch(command, '[^\r\n]+') do
@@ -192,13 +191,27 @@ function createDevice:rebuild()
     end
 
     -- build presets
-    for _, v in pairs(createDevice:_rebuildPresets()) do
-        table.insert(newData, v)
+    if createDevice.presetCommand then
+        for _, v in pairs(createDevice:_rebuildPresets()) do
+            table.insert(newData, v)
+        end
     end
 
     createDevice.deviceData = newData
     createDevice:refresh()
     hs.alert('rebuilt device list')
+end
+
+-- createDevice:setPresetCommand()
+-- Method
+-- Sets the command used to find presets for the device chooser
+-- Any command that returns a list of files separated by newlines (e.g. find, fd) will work
+-- Note that any commands must be absolute paths, for example "/usr/bin/find" instead of "find"
+--
+-- Parameters
+-- * presetCommand - A string containing a shell command
+function createDevice:setPresetCommand(presetCommand)
+    createDevice.presetCommand = presetCommand
 end
 
 return createDevice
