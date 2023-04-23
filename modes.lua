@@ -5,7 +5,7 @@ modes.hotkeys = {}
 modes.mixer = dofile(hs.spoons.resourcePath('mixer.lua'))
 modes.rack = dofile(hs.spoons.resourcePath('rack.lua'))
 modes.sequencer = dofile(hs.spoons.resourcePath('sequencer.lua'))
-modes.activeMode = 'mixer'
+modes.activeMode = 'rack'
 
 -----------
 -- setup --
