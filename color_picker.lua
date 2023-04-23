@@ -1,4 +1,5 @@
 local colorPicker = {}
+local log = hs.logger.new('color', 'debug')
 local app = hs.appfinder.appFromName('Reason')
 
 -- colorPicker.colorList
@@ -176,10 +177,9 @@ end
 function colorPicker:select(choice)
     if not choice then return end
     local color = choice['text']:getString()
-    print(color)
     local selector = { 'Edit', self.type, color }
-    print(hs.inspect(selector))
     app:selectMenuItem(selector)
+    log.d('selected ' .. color)
 end
 
 return colorPicker
