@@ -40,7 +40,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function mixer:color(m)
     return hs.hotkey.new(m.color[1], m.color[2], function()
-        local picker = mixer.colorPicker:setup('Channel color')
+        mixer.colorPicker:setup('Channel color')
         mixer.colorPicker:show()
         log.d('showing mixer channel color picker')
     end)
