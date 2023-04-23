@@ -12,6 +12,7 @@ mixer.colorPicker = dofile(hs.spoons.resourcePath('color_picker.lua'))
 function mixer:bindHotkeys(maps)
     table.insert(mixer.hotkeys, mixer:color(maps))
     table.insert(mixer.hotkeys, mixer:createMixChannel(maps))
+    table.insert(mixer.hotkeys, mixer:resetChannelSettings(maps))
 end
 
 function mixer:activate()
@@ -59,6 +60,22 @@ function mixer:createMixChannel(m)
     return hs.hotkey.new(m.createMixChannel[1], m.createMixChannel[2], function()
         app:selectMenuItem({ 'Create', 'Create Mix Channel' })
         log.d('created mix channel')
+    end)
+end
+
+-- mixer:resetAllChannelSettings(m)
+-- Method
+-- Resets the channel settings to default
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
+function mixer:resetChannelSettings(m)
+    return hs.hotkey.new(m.resetAllChannelSettings[1], m.resetAllChannelSettings[2], function()
+        app:selectMenuItem({ 'Edit', 'Reset All Channel Settings' })
+        log.d('reset all channel settings')
     end)
 end
 

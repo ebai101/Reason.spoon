@@ -23,6 +23,8 @@ return {
     createMixChannel = { { 'cmd', 'shift' }, 't' },
     copySettings = { { 'ctrl' }, 'c' },
     pasteSettings = { { 'ctrl' }, 'v' },
+    -- mixer
+    resetAllChannelSettings = { { 'alt' }, 'r' },
     -- rack
     autoRoute = { { 'alt' }, 'a' },
     browsePatches = { { 'alt' }, 'f' },
