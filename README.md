@@ -44,3 +44,7 @@ spoon.Reason:setPresetCommand([[/usr/bin/find /Users/me/folderOfPatches]])
 -- Finally, after calling everything else
 spoon.Reason:start()
 ```
+
+## Known Issues
+
+Reloading Hammerspoon can take a long time if `bce_data.json` is very large. This is usually due to the user-supplied preset command returning a ton of files. It can be quick-fixed by narrowing the search of the preset command, then deleting `bce_data.json` and reloading. This file read should ideally run concurrently or just at a better time, and the preset rebuilder should also prune invalid files from the results before writing them to disk.
