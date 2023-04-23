@@ -128,8 +128,8 @@ function globalMaps:toggleToolWindow(m)
             local p = hs.geometry.point(s.w, s.y + s.h)
             toolWindow:setTopLeft(p)
             log.d('tool window deactivated')
-            log.d('screen frame: ' .. tostring(s))
-            log.d('window point: ' .. tostring(p))
+            -- log.d('screen frame: ' .. tostring(s))
+            -- log.d('window point: ' .. tostring(p))
         end
     end)
 end
