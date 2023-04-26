@@ -93,7 +93,8 @@ function sequencer:flatten(m)
         sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clips to New Recordings' })
         sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Enable Stretch' })
         local ok = sequencer.app:selectMenuItem({ 'Edit', 'Delete Unused Recordings' })
-        -- todo: click delete dialog
+        hs.osascript.applescript(
+            [[tell application "System Events" to click button "Delete" of front window of application process "Reason"]])
         log.d('flattened clips')
     end)
 end
