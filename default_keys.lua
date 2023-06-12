@@ -40,6 +40,6 @@ return {
     legato = { { 'alt' }, 'a' },
     quantize = { { 'alt' }, 'q' },
     reverse = { { 'alt' }, 'r' },
-    toggleLoop = { {}, 'tab' },
-    setLoopAndPlay = { {}, '`' },
+    -- toggleLoop = { {}, 'tab' },
+    setLoopAndPlay = { { 'alt' }, '`' },
 }

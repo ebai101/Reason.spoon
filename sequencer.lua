@@ -18,7 +18,7 @@ function sequencer:bindHotkeys(maps)
     table.insert(sequencer.hotkeys, sequencer:quantize(maps))
     table.insert(sequencer.hotkeys, sequencer:reverse(maps))
     table.insert(sequencer.hotkeys, sequencer:setLoopAndPlay(maps))
-    table.insert(sequencer.hotkeys, sequencer:toggleLoop(maps))
+    -- table.insert(sequencer.hotkeys, sequencer:toggleLoop(maps))
     table.insert(sequencer.hotkeys, sequencer:color(maps))
 end
 
