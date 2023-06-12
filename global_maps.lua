@@ -80,16 +80,16 @@ globalMaps.eventtap = hs.eventtap.new(
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:togglePianoKeys(m)
     return hs.hotkey.new(m.togglePianoKeys[1], m.togglePianoKeys[2], function()
-        local ok = globalMaps.app:selectMenuItem({ 'Window', 'Show On-screen Piano Keys' })
-        if ok then
-            local kbWindow = hs.window('Piano Keys')
+        if globalMaps.app:findWindow('Piano Keys') == nil then
+            globalMaps.app:selectMenuItem({ 'Window', 'Show On-screen Piano Keys' })
+            local kbWindow = globalMaps.app:findWindow('Piano Keys')
             local w = kbWindow:frame()
             local s = hs.screen.mainScreen():frame()
             local p = hs.geometry.rect(s.x, s.y + s.h - w.h)
             kbWindow:setTopLeft(p)
             log.d('piano keys activated')
-            log.d(s)
-            log.d(p)
+            -- log.d(s)
+            -- log.d(p)
         else
             globalMaps.app:selectMenuItem({ 'Window', 'Hide On-screen Piano Keys' })
             log.d('piano keys deactivated')
