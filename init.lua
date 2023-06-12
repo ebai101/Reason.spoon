@@ -25,18 +25,20 @@ local log = hs.logger.new('reason', 'debug')
 
 function reason:start()
     reason.createDevice:start()
+
+    local app = hs.application.frontmostApplication()
+    if app:title() == 'Reason' then
+        reason:_activateAll(app)
+        log.d('reason already at the front, automatically activating')
+    end
+
     reason.watcher = hs.application.watcher.new(function(appName, eventType)
         if appName == reason.appName then
             if eventType == hs.application.watcher.activated then
-                local app = hs.appfinder.appFromName(appName)
-                reason.globalMaps:activate(app)
-                reason.createDevice:activate(app)
-                reason.modes:activate(app)
+                reason:_activateAll(hs.appfinder.appFromName(appName))
                 log.d('reason activated')
             elseif eventType == hs.application.watcher.deactivated then
-                reason.globalMaps:deactivate()
-                reason.createDevice:deactivate()
-                reason.modes:deactivate()
+                reason:_deactivateAll()
                 log.d('reason deactivated')
             end
         end
@@ -53,6 +55,18 @@ function reason:bindHotkeys(maps)
     reason.globalMaps:bindHotkeys(maps)
     reason.createDevice:bindHotkeys(maps)
     reason.modes:bindHotkeys(maps)
+end
+
+function reason:_activateAll(app)
+    reason.globalMaps:activate(app)
+    reason.createDevice:activate(app)
+    reason.modes:activate(app)
+end
+
+function reason:_deactivateAll()
+    reason.globalMaps:deactivate()
+    reason.createDevice:deactivate()
+    reason.modes:deactivate()
 end
 
 -- Reason:setPresetCommand()
