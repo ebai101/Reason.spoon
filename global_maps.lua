@@ -109,7 +109,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function globalMaps:toggleToolWindow(m)
     return hs.hotkey.new(m.toggleToolWindow[1], m.toggleToolWindow[2], function()
-        if hs.window('Tool Window') == nil then
+        if globalMaps.app:findWindow('Tool Window') == nil then
             log.d('tool window was closed, opening it')
             globalMaps.app:selectMenuItem({ 'Window', 'Show Tool Window' })
             globalMaps.toolWindowActive = true
