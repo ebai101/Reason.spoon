@@ -201,7 +201,6 @@ end
 -- sequencer:setLoopAndPlay(m)
 -- Method
 -- Sets the loop to the current selection and starts playback
--- This is equivalent to the "P" key, but the default binding of "`" is easier to reach with the left hand
 --
 -- Parameters:
 -- * m - A table of hotkey mappings
@@ -218,7 +217,6 @@ end
 -- sequencer:toggleLoop(m)
 -- Method
 -- Toggles loop mode
--- This is equivalent to the "L" key, but the default binding of "Tab" is easier to reach with the left hand
 --
 -- Parameters:
 -- * m - A table of hotkey mappings
