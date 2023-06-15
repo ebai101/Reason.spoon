@@ -3,6 +3,7 @@ local log = hs.logger.new('global', 'debug')
 
 globalMaps.hotkeys = {}
 globalMaps.toolWindowActive = false
+globalMaps.copySettingsActive = false
 
 -----------
 -- setup --
@@ -26,6 +27,7 @@ function globalMaps:bindHotkeys(maps)
     globalMaps.copySettingsMode:bind({}, '4', globalMaps._copySettingsSends)
     globalMaps.copySettingsMode:bind({}, '5', globalMaps._copySettingsDynamics)
     globalMaps.copySettingsMode:bind({}, 'escape', globalMaps._copySettingsExit)
+    globalMaps.copySettingsMode:bind(maps.copySettings[1], maps.copySettings[2], globalMaps._copySettingsExit)
     table.insert(globalMaps.hotkeys, globalMaps:copySettings(maps))
     table.insert(globalMaps.hotkeys, globalMaps:pasteSettings(maps))
 end
@@ -286,8 +288,12 @@ function globalMaps:copySettings(m)
             log.d('copied patch')
         else
             globalMaps.copyPatch = false
-            globalMaps.copySettingsMode:enter()
-            globalMaps.copySettingsAlertUUID = hs.alert('1\tall\n2\tinserts\n3\tEQ/filters\n4\tsends\n5\tdynamics', '')
+            if not globalMaps.copySettingsActive then
+                globalMaps.copySettingsMode:enter()
+                globalMaps.copySettingsAlertUUID = hs.alert('1\tall\n2\tinserts\n3\tEQ/filters\n4\tsends\n5\tdynamics',
+                    '')
+                globalMaps.copySettingsActive = true
+            end
         end
     end)
 end
@@ -323,8 +329,7 @@ function globalMaps:pasteSettings(m)
 end
 
 function globalMaps:_copySettings()
-    globalMaps.copySettingsMode:exit()
-    hs.alert.closeSpecific(globalMaps.copySettingsAlertUUID)
+    globalMaps:_copySettingsExit()
     local ok = globalMaps.app:selectMenuItem({ 'Edit', 'Copy Channel Settings', globalMaps.copySettingsType })
     if ok then
         log.d('copied ' .. globalMaps.copySettingsType)
@@ -360,6 +365,7 @@ end
 
 function globalMaps:_copySettingsExit()
     globalMaps.copySettingsMode:exit()
+    globalMaps.copySettingsActive = false
     hs.alert.closeSpecific(globalMaps.copySettingsAlertUUID)
 end
 
