@@ -16,9 +16,9 @@ function createDevice:start()
         return createDevice:select(choice)
     end)
 
-    if not createDevice.presetCommand then
-        log.i('createDevice.presetCommand is not set, no presets will be indexed')
-        log.i('consider running spoon.Reason:setPresetCommand() in your init.lua')
+    if not (createDevice.presetCommand or createDevice.presetFolders) then
+        log.i('no preset folders or command provided')
+        log.i('consider running spoon.Reason:setPresetFolders() in your init.lua')
     end
 end
 
@@ -103,17 +103,47 @@ function createDevice:refresh()
 end
 
 function createDevice:_rebuildPresets()
-    local command = hs.execute(createDevice.presetCommand)
     local presets = {}
 
-    for line in string.gmatch(command, '[^\r\n]+') do
-        local name = line:match('^.+/(.+)$')
-        table.insert(presets, {
-            ['text'] = name,
-            ['subText'] = line,
-        })
+    -- default to preset command
+    if createDevice.presetCommand then
+        fileList = hs.execute(createDevice.presetCommand)
+        for abspath in string.gmatch(fileList, '[^\r\n]+') do
+            local filename = abspath:match('^.+/(.+)$')
+            table.insert(presets, {
+                ['text'] = filename,
+                ['subText'] = abspath,
+            })
+            log.d(filename)
+        end
+    elseif createDevice.presetFolders then
+        for _, dir in pairs(createDevice.presetFolders) do
+            presets = createDevice:_presetWalk(dir, presets)
+        end
+    else
+        log.e('no presets specified! cannot rebuild preset list')
     end
 
+    return presets
+end
+
+function createDevice:_presetWalk(dir, presets)
+    for filename in hs.fs.dir(dir) do
+        local abspath = string.format('%s/%s', dir, filename)
+        local uti = hs.fs.fileUTI(abspath)
+
+        if (string.find(uti, 'se.propellerheads.reason') or string.find(uti, 'se.propellerheads.rackextension')) then
+            table.insert(presets, {
+                ['text'] = filename,
+                ['subText'] = abspath,
+            })
+            log.d(filename)
+        elseif string.find(uti, 'public.folder') then
+            if not (filename == '.' or filename == '..') then
+                createDevice:_presetWalk(abspath, presets)
+            end
+        end
+    end
     return presets
 end
 
@@ -191,7 +221,7 @@ function createDevice:rebuild()
     end
 
     -- build presets
-    if createDevice.presetCommand then
+    if (createDevice.presetCommand or createDevice.presetFolders) then
         for _, v in pairs(createDevice:_rebuildPresets()) do
             table.insert(newData, v)
         end
@@ -212,6 +242,10 @@ end
 -- * presetCommand - A string containing a shell command
 function createDevice:setPresetCommand(presetCommand)
     createDevice.presetCommand = presetCommand
+end
+
+function createDevice:setPresetFolders(presetFolders)
+    createDevice.presetFolders = presetFolders
 end
 
 return createDevice

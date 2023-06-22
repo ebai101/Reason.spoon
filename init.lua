@@ -82,4 +82,8 @@ function reason:setPresetCommand(presetCommand)
     reason.createDevice:setPresetCommand(presetCommand)
 end
 
+function reason:setPresetFolders(presetFolders)
+    reason.createDevice:setPresetFolders(presetFolders)
+end
+
 return reason
