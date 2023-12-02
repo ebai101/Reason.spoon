@@ -2,6 +2,11 @@ local sequencer = {}
 local log = hs.logger.new('sequencer', 'debug')
 
 sequencer.hotkeys = {}
+sequencer.eventtaps = {}
+sequencer.zoomSum = 0
+sequencer.lastZoomTime = 0
+sequencer.zoomThresholdSlow = 0.12
+sequencer.zoomThresholdFast = 0.02
 sequencer.colorPicker = dofile(hs.spoons.resourcePath('color_picker.lua'))
 
 -----------
@@ -20,18 +25,21 @@ function sequencer:bindHotkeys(maps)
     table.insert(sequencer.hotkeys, sequencer:setLoopAndPlay(maps))
     -- table.insert(sequencer.hotkeys, sequencer:toggleLoop(maps))
     table.insert(sequencer.hotkeys, sequencer:color(maps))
+
+    table.insert(sequencer.eventtaps, sequencer:mouse4Mute())
+    table.insert(sequencer.eventtaps, sequencer:pinchZoom())
 end
 
 function sequencer:activate(app)
     for _, v in pairs(sequencer.hotkeys) do v:enable() end
-    sequencer.eventtap:start()
+    for _, v in pairs(sequencer.eventtaps) do v:start() end
     sequencer.app = app
     log.d('sequencer activated')
 end
 
 function sequencer:deactivate()
     for _, v in pairs(sequencer.hotkeys) do v:disable() end
-    sequencer.eventtap:stop()
+    for _, v in pairs(sequencer.eventtaps) do v:stop() end
     log.d('sequencer deactivated')
 end
 
@@ -39,19 +47,68 @@ end
 -- mouse --
 -----------
 
--- sequencer.eventtap
--- Variable
--- An hs.eventtap that maps MOUSE4 to "M", for muting clips in the sequencer
-sequencer.eventtap = hs.eventtap.new(
-    { hs.eventtap.event.types.otherMouseUp }, function(event)
-        local buttonNumber = tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties.mouseEventButtonNumber)))
-        if buttonNumber == 3 then
-            hs.eventtap.event.newKeyEvent('m', true):setFlags({}):post()
-            hs.eventtap.event.newKeyEvent('m', false):setFlags({}):post()
-            log.d('mouse4')
+-- sequencer:mouse4Mute()
+-- Method
+-- Maps MOUSE4 to "M", for muting clips and notes in the sequencer
+--
+-- Returns:
+-- * An hs.eventtap object, to be addded to this module's eventtaps table
+function sequencer:mouse4Mute()
+    return hs.eventtap.new(
+        { hs.eventtap.event.types.otherMouseUp }, function(event)
+            local buttonNumber = tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties
+                .mouseEventButtonNumber)))
+            if buttonNumber == 3 then
+                hs.eventtap.event.newKeyEvent('m', true):setFlags({}):post()
+                hs.eventtap.event.newKeyEvent('m', false):setFlags({}):post()
+                log.d('mouse4')
+            end
+        end)
+end
+
+-- sequencer:pinchZoom()
+-- Method
+-- Maps the pinch gesture on the trackpad to zoom the timeline in and out
+-- Hold shift for a slower zoom, hold alt for a vertical zoom
+--
+-- Returns:
+-- * An hs.eventtap object, to be addded to this module's eventtaps table
+function sequencer:pinchZoom()
+    return hs.eventtap.new({ hs.eventtap.event.types.gesture }, function(event)
+        local gestureType = event:getType(true)
+        if gestureType == hs.eventtap.event.types.magnify then
+            local zoomLevel = event:getTouchDetails().magnification
+            local zoomTime = hs.timer.absoluteTime()
+            if zoomTime - sequencer.lastZoomTime > 10000000 then
+                sequencer.zoomSum = 0
+            end
+            sequencer.zoomSum = sequencer.zoomSum + zoomLevel
+
+            local threshold = sequencer.zoomThresholdFast
+            if event:getFlags()['shift'] then
+                threshold = sequencer.zoomThresholdSlow
+            end
+
+            local flags = { ['cmd'] = true, ['shift'] = true }
+            if event:getFlags()['alt'] then
+                flags['alt'] = true
+                threshold = sequencer.zoomThresholdSlow
+            end
+
+            if sequencer.zoomSum >= threshold then
+                hs.eventtap.event.newKeyEvent('=', true):setFlags(flags):post()
+                hs.eventtap.event.newKeyEvent('=', false):setFlags(flags):post()
+                sequencer.zoomSum = 0
+            elseif sequencer.zoomSum <= -threshold then
+                hs.eventtap.event.newKeyEvent('-', true):setFlags(flags):post()
+                hs.eventtap.event.newKeyEvent('-', false):setFlags(flags):post()
+                sequencer.zoomSum = 0
+            end
+
+            sequencer.lastZoomTime = zoomTime
         end
     end)
-
+end
 
 --------------
 -- keybinds --
