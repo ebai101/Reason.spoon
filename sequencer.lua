@@ -5,8 +5,7 @@ sequencer.hotkeys = {}
 sequencer.eventtaps = {}
 sequencer.zoomSum = 0
 sequencer.lastZoomTime = 0
-sequencer.zoomThresholdSlow = 0.12
-sequencer.zoomThresholdFast = 0.02
+sequencer.zoomThreshold = 0.10
 sequencer.colorPicker = dofile(hs.spoons.resourcePath('color_picker.lua'))
 
 -----------
@@ -69,44 +68,55 @@ end
 -- sequencer:pinchZoom()
 -- Method
 -- Maps the pinch gesture on the trackpad to zoom the timeline in and out
--- Hold shift for a slower zoom, hold alt for a vertical zoom
+-- Hold shift for a slower zoom, hold cmd for a vertical zoom
+-- Hold alt to zoom in on the playhead instead of the cursor
 --
 -- Returns:
 -- * An hs.eventtap object, to be addded to this module's eventtaps table
 function sequencer:pinchZoom()
     return hs.eventtap.new({ hs.eventtap.event.types.gesture }, function(event)
         local gestureType = event:getType(true)
-        if gestureType == hs.eventtap.event.types.magnify then
-            local zoomLevel = event:getTouchDetails().magnification
-            local zoomTime = hs.timer.absoluteTime()
-            if zoomTime - sequencer.lastZoomTime > 1000000000 then
-                sequencer.zoomSum = 0
-            end
-            sequencer.zoomSum = sequencer.zoomSum + zoomLevel
+        if gestureType ~= hs.eventtap.event.types.magnify then return end
 
-            local threshold = sequencer.zoomThresholdFast
-            if event:getFlags()['shift'] then
-                threshold = sequencer.zoomThresholdSlow
-            end
-
-            local flags = { ['cmd'] = true, ['shift'] = true }
-            if event:getFlags()['cmd'] then
-                flags['alt'] = true
-                threshold = sequencer.zoomThresholdSlow
-            end
-
-            if sequencer.zoomSum >= threshold then
-                hs.eventtap.event.newKeyEvent('=', true):setFlags(flags):post()
-                hs.eventtap.event.newKeyEvent('=', false):setFlags(flags):post()
-                sequencer.zoomSum = 0
-            elseif sequencer.zoomSum <= -threshold then
-                hs.eventtap.event.newKeyEvent('-', true):setFlags(flags):post()
-                hs.eventtap.event.newKeyEvent('-', false):setFlags(flags):post()
-                sequencer.zoomSum = 0
-            end
-
-            sequencer.lastZoomTime = zoomTime
+        local zoomLevel = event:getTouchDetails().magnification
+        local zoomTime = hs.timer.absoluteTime()
+        sequencer.zoomSum = sequencer.zoomSum + zoomLevel
+        if zoomTime - sequencer.lastZoomTime > 1000000000 then
+            sequencer.zoomSum = zoomLevel >= 0 and sequencer.zoomThreshold or -sequencer.zoomThreshold
         end
+
+        local threshold = sequencer.zoomThreshold
+        if event:getFlags()['shift'] or event:getFlags()['cmd'] then
+            threshold = threshold * 1.25
+        elseif event:getFlags()['alt'] then
+            threshold = threshold * 0.75
+        end
+
+        local offsets = {}
+        if sequencer.zoomSum >= threshold then
+            offsets = { 1, 0 }
+            sequencer.zoomSum = 0
+        elseif sequencer.zoomSum <= -threshold then
+            offsets = { -1, 0 }
+            sequencer.zoomSum = 0
+        else
+            return
+        end
+
+        if event:getFlags()['alt'] then
+            local flags = { ['cmd'] = true, ['shift'] = true }
+            local key = offsets[1] == 1 and '=' or '-'
+            hs.eventtap.event.newKeyEvent(key, true):setFlags(flags):post()
+            hs.eventtap.event.newKeyEvent(key, false):setFlags(flags):post()
+        else
+            local mods = { 'cmd', 'shift' }
+            if event:getFlags()['cmd'] then
+                offsets = { offsets[2], offsets[1] }
+            end
+            hs.eventtap.event.newScrollEvent(offsets, mods, 'pixel'):post()
+        end
+
+        sequencer.lastZoomTime = zoomTime
     end)
 end
 
