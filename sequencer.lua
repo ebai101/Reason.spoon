@@ -90,7 +90,7 @@ function sequencer:pinchZoom()
             end
 
             local flags = { ['cmd'] = true, ['shift'] = true }
-            if event:getFlags()['alt'] then
+            if event:getFlags()['cmd'] then
                 flags['alt'] = true
                 threshold = sequencer.zoomThresholdSlow
             end
