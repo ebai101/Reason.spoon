@@ -4,12 +4,11 @@ A Spoon for workflow optimization in Reason. This spoon greatly overhauls Reason
 
 Some other cool features include:
 - Super fast, mouse-free creation of rack devices with Cmd + F 
+- Pinch to zoom the timeline with the trackpad
 - Move the tool window under your mouse when toggling it
 - Keybinds for actions in the tool window, such as legato adjustments and tempo scaling, which cannot be accessed with keyboard shortcuts normally
 - Quickly copy patches and different types of channel settings with Ctrl + C and Ctrl + V
 - Color your channels and tracks using a chooser with Ctrl + Cmd + C
-
-Check out a full list of keybinds in [KEYBINDS.md](KEYBINDS.md)
 
 **DISCLAIMER:** This is a WIP and has only been tested on my machine, with the latest version of Reason. Some features may not work as intended.
 
@@ -44,6 +43,16 @@ spoon.Reason:setPresetCommand([[/usr/bin/find /Users/me/folderOfPatches]])
 -- Finally, after calling everything else
 spoon.Reason:start()
 ```
+
+## Usage
+
+Once you're all set up, take a look at [defaults_keys.lua](default_keys.lua) for a full list of keybinds (more legible documentation is WIP).
+
+This Spoon assumes a few things about how the user interacts with Reason. Most importantly, it assumes that you only have one of the Mixer, the Rack or the Sequencer in view at any given time, taking up the full window. I find this to be my preferred way to work in Reason, though I know many people like to have different views open at the same time. I can't guarantee that all of the modes will work properly if you use split views, but they should function somewhat reliably.
+
+Also assumed is that you're using a mouse/pointing device with 5 buttons, e.g. thumb buttons or extra macro buttons on a trackball. If you're not, you will miss out on the mouse delete/mute functionality but you'll still be able to use everything else.
+
+Not required but recommended: using a utility like [Karabiner-Elements](https://karabiner-elements.pqrs.org/) to remap Caps Lock to Ctrl, for easier use of the Ctrl key shortcuts, of which there are many.
 
 ## Known Issues
 
