@@ -79,7 +79,7 @@ function sequencer:pinchZoom()
         if gestureType == hs.eventtap.event.types.magnify then
             local zoomLevel = event:getTouchDetails().magnification
             local zoomTime = hs.timer.absoluteTime()
-            if zoomTime - sequencer.lastZoomTime > 10000000 then
+            if zoomTime - sequencer.lastZoomTime > 1000000000 then
                 sequencer.zoomSum = 0
             end
             sequencer.zoomSum = sequencer.zoomSum + zoomLevel
