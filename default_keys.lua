@@ -3,19 +3,17 @@
 -- A set of opinionated defaults for the spoon
 -- These can be overwritten by the user in init.lua before calling Reason:bindHotkeys()
 return {
-    -- modes
-    toggleMixer = { { 'ctrl' }, 'q' },
-    toggleRack = { { 'ctrl' }, 'w' },
-    toggleSequencer = { { 'ctrl' }, 'e' },
     -- create device
     createDevice = { { 'cmd' }, 'f' },
     -- global
+    toggleMixer = { { 'ctrl' }, 'q' },
+    toggleRack = { { 'ctrl' }, 'w' },
+    toggleSequencer = { { 'ctrl' }, 'e' },
     togglePianoKeys = { { 'ctrl' }, 'a' },
     toggleToolWindow = { { 'ctrl' }, 'd' },
     toggleSpectrumEQ = { { 'ctrl' }, 's' },
     toggleRegrooveMixer = { { 'ctrl' }, 'r' },
     toggleBrowser = { { 'ctrl' }, 'f' },
-    record = { { 'ctrl' }, 'space' },
     exportSong = { { 'ctrl' }, 't' },
     exportLoop = { { 'ctrl', 'cmd' }, 't' },
     bounceMixerChannels = { { 'ctrl' }, 'b' },
