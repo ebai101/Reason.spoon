@@ -15,7 +15,6 @@ function globalMaps:bindHotkeys(maps)
     table.insert(globalMaps.hotkeys, globalMaps:toggleSpectrumEQ(maps))
     table.insert(globalMaps.hotkeys, globalMaps:toggleRegrooveMixer(maps))
     table.insert(globalMaps.hotkeys, globalMaps:toggleBrowser(maps))
-    -- table.insert(globalMaps.hotkeys, globalMaps:record(maps))
     table.insert(globalMaps.hotkeys, globalMaps:exportSong(maps))
     table.insert(globalMaps.hotkeys, globalMaps:exportLoop(maps))
     table.insert(globalMaps.hotkeys, globalMaps:bounceMixerChannels(maps))
@@ -196,23 +195,6 @@ function globalMaps:toggleBrowser(m)
             globalMaps.app:selectMenuItem({ 'Window', 'Hide Browser' })
             log.d('browser deactivated')
         end
-    end)
-end
-
--- globalMaps:record(m)
--- Method
--- Enables recording and starts playback
---
--- Parameters:
--- * m - A table of hotkey mappings
---
--- Returns:
--- * An hs.hotkey object, to be addded to this module's hotkeys table
-function globalMaps:record(m)
-    return hs.hotkey.new(m.record[1], m.record[2], function()
-        hs.eventtap.event.newKeyEvent('return', true):setFlags({ ['cmd'] = true }):post()
-        hs.eventtap.event.newKeyEvent('return', false):setFlags({ ['cmd'] = true }):post()
-        log.d('record')
     end)
 end
 
