@@ -78,19 +78,16 @@ function sequencer:pinchZoom()
         local gestureType = event:getType(true)
         if gestureType ~= hs.eventtap.event.types.magnify then return end
 
-        local zoomLevel = event:getTouchDetails().magnification
         local zoomTime = hs.timer.absoluteTime()
-        sequencer.zoomSum = sequencer.zoomSum + zoomLevel
-        if zoomTime - sequencer.lastZoomTime > 1000000000 then
-            sequencer.zoomSum = zoomLevel >= 0 and sequencer.zoomThreshold or -sequencer.zoomThreshold
-        end
+        if zoomTime - sequencer.lastZoomTime > 1000000000 then sequencer.zoomSum = 0 end
+        sequencer.lastZoomTime = zoomTime
 
         local threshold = sequencer.zoomThreshold
-        if event:getFlags()['shift'] or event:getFlags()['cmd'] then
-            threshold = threshold * 1.25
-        elseif event:getFlags()['alt'] then
-            threshold = threshold * 0.75
-        end
+        if event:getFlags()['alt'] then threshold = threshold * 0.5 end
+        if event:getFlags()['shift'] then threshold = threshold * 2 end
+
+        local zoomLevel = event:getTouchDetails().magnification
+        sequencer.zoomSum = sequencer.zoomSum + zoomLevel
 
         local offsets = {}
         if sequencer.zoomSum >= threshold then
@@ -103,20 +100,15 @@ function sequencer:pinchZoom()
             return
         end
 
-        if event:getFlags()['alt'] then
+        if event:getFlags()['alt'] or event:getFlags()['cmd'] then
             local flags = { ['cmd'] = true, ['shift'] = true }
+            if event:getFlags()['cmd'] then flags['alt'] = true end
             local key = offsets[1] == 1 and '=' or '-'
             hs.eventtap.event.newKeyEvent(key, true):setFlags(flags):post()
             hs.eventtap.event.newKeyEvent(key, false):setFlags(flags):post()
         else
-            local mods = { 'cmd', 'shift' }
-            if event:getFlags()['cmd'] then
-                offsets = { offsets[2], offsets[1] }
-            end
-            hs.eventtap.event.newScrollEvent(offsets, mods, 'pixel'):post()
+            hs.eventtap.event.newScrollEvent(offsets, { 'cmd', 'shift' }, 'pixel'):post()
         end
-
-        sequencer.lastZoomTime = zoomTime
     end)
 end
 
