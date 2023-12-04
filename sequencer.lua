@@ -66,9 +66,9 @@ end
 
 -- sequencer:pinchZoom()
 -- Method
--- Maps the pinch gesture on the trackpad to zoom the timeline in and out
--- Hold shift for a slower zoom, hold cmd for a vertical zoom
--- Hold alt to zoom in on the playhead instead of the cursor
+-- Zooms the timeline in and out with a pinch gesture on the trackpad
+-- Hold cmd while pinching to zoom vertically
+-- Hold shift while pinching to zoom in on the playhead instead of the cursor
 --
 -- Returns:
 -- * An hs.eventtap object, to be addded to this module's eventtaps table
@@ -76,14 +76,14 @@ function sequencer:pinchZoom()
     return hs.eventtap.new({ hs.eventtap.event.types.gesture }, function(event)
         local gestureType = event:getType(true)
         if gestureType ~= hs.eventtap.event.types.magnify then return end
-
         local zoomTime = hs.timer.absoluteTime()
         if zoomTime - sequencer.lastZoomTime > 1000000000 then sequencer.zoomSum = 0 end
         sequencer.lastZoomTime = zoomTime
 
+        -- the zoom key commands are much less sensitive than the scroll wheel
+        -- so we lower the threshold when using them
         local threshold = sequencer.zoomThreshold
-        if event:getFlags()['alt'] then threshold = threshold * 0.5 end
-        if event:getFlags()['shift'] then threshold = threshold * 2 end
+        if event:getFlags()['shift'] then threshold = threshold * 0.5 end
 
         local zoomLevel = event:getTouchDetails().magnification
         sequencer.zoomSum = sequencer.zoomSum + zoomLevel
@@ -99,7 +99,7 @@ function sequencer:pinchZoom()
             return
         end
 
-        if event:getFlags()['alt'] or event:getFlags()['cmd'] then
+        if event:getFlags()['shift'] or event:getFlags()['cmd'] then
             local flags = { ['cmd'] = true, ['shift'] = true }
             if event:getFlags()['cmd'] then flags['alt'] = true end
             local key = offsets[1] == 1 and '=' or '-'
