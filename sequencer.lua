@@ -22,7 +22,6 @@ function sequencer:bindHotkeys(maps)
     table.insert(sequencer.hotkeys, sequencer:quantize(maps))
     table.insert(sequencer.hotkeys, sequencer:reverse(maps))
     table.insert(sequencer.hotkeys, sequencer:setLoopAndPlay(maps))
-    -- table.insert(sequencer.hotkeys, sequencer:toggleLoop(maps))
     table.insert(sequencer.hotkeys, sequencer:color(maps))
 
     table.insert(sequencer.eventtaps, sequencer:mouse4Mute())
@@ -270,23 +269,6 @@ function sequencer:setLoopAndPlay(m)
     return hs.hotkey.new(m.setLoopAndPlay[1], m.setLoopAndPlay[2], function()
         sequencer.app:selectMenuItem({ 'Edit', 'Set Loop to Selection and Start Playback' })
         log.d('set loop and play')
-    end)
-end
-
--- sequencer:toggleLoop(m)
--- Method
--- Toggles loop mode
---
--- Parameters:
--- * m - A table of hotkey mappings
---
--- Returns:
--- * An hs.hotkey object, to be addded to this module's hotkeys table
-function sequencer:toggleLoop(m)
-    return hs.hotkey.new(m.toggleLoop[1], m.toggleLoop[2], function()
-        hs.eventtap.event.newKeyEvent('l', true):post()
-        hs.eventtap.event.newKeyEvent('l', false):post()
-        log.d('toggled loop')
     end)
 end
 
