@@ -8,6 +8,10 @@ sequencer.lastZoomTime = 0
 sequencer.zoomThreshold = 0.10
 sequencer.colorPicker = dofile(hs.spoons.resourcePath('color_picker.lua'))
 
+local function applescript(x)
+    hs.execute('osascript -e ' .. [[']] .. string.gsub(x, [[']], [['\'']]) .. [[']])
+end
+
 -----------
 -- setup --
 -----------
@@ -151,7 +155,7 @@ function sequencer:flatten(m)
         sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clips to New Recordings' })
         sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Enable Stretch' })
         local ok = sequencer.app:selectMenuItem({ 'Edit', 'Delete Unused Recordings' })
-        hs.osascript.applescript(
+        applescript(
             [[tell application "System Events" to click button "Delete" of front window of application process "Reason"]])
         log.d('flattened clips')
     end)
@@ -184,7 +188,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:doubleTempo(m)
     return hs.hotkey.new(m.doubleTempo[1], m.doubleTempo[2], function()
-        hs.osascript.applescript(
+        applescript(
             'tell application "System Events" to click button 7 of window "Tool Window" of application process "Reason"')
         log.d('doubled tempo')
     end)
@@ -201,7 +205,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:halfTempo(m)
     return hs.hotkey.new(m.halfTempo[1], m.halfTempo[2], function()
-        hs.osascript.applescript(
+        applescript(
             'tell application "System Events" to click button 8 of window "Tool Window" of application process "Reason"')
         log.d('halved tempo')
     end)
@@ -218,7 +222,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:legato(m)
     return hs.hotkey.new(m.legato[1], m.legato[2], function()
-        hs.osascript.applescript(
+        applescript(
             'tell application "System Events" to click button 5 of window "Tool Window" of application process "Reason"')
         log.d('legato')
     end)
