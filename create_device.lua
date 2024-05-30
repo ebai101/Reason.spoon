@@ -152,9 +152,8 @@ function createDevice:_rebuildDevices()
 
     if createDevice.app:getMenuItems() == nil then return devices end -- quit if no menus are up yet
     local menus = createDevice.app:getMenuItems()[4]['AXChildren'][1] -- children of "Create" menu
-
     -- build Instruments, Effects, and Utilities
-    for i = 7, 9 do
+    for i = 8, 10 do
         local foundSubmenu = false
         for j = 1, #menus[i]['AXChildren'][1] do
             -- iterate until we find Reason Studios
@@ -188,9 +187,9 @@ function createDevice:_rebuildDevices()
     end
 
     -- build Players
-    for i = 1, #menus[10]['AXChildren'][1] do
-        if not (menus[10]['AXChildren'][1][i]['AXTitle'] == '') then -- table may contain divider bars in the future
-            local title = menus[10]['AXChildren'][1][i]['AXTitle']
+    for i = 1, #menus[11]['AXChildren'][1] do
+        if not (menus[11]['AXChildren'][1][i]['AXTitle'] == '') then -- table may contain divider bars in the future
+            local title = menus[11]['AXChildren'][1][i]['AXTitle']
             log.d(title)
             table.insert(devices, {
                 ['text'] = title,

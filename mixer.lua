@@ -58,7 +58,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function mixer:createMixChannel(m)
     return hs.hotkey.new(m.createMixChannel[1], m.createMixChannel[2], function()
-        mixer.app:selectMenuItem({ 'Create', 'Create Mix Channel' })
+        mixer.app:selectMenuItem({ 'Create', 'Add Mix Channel' })
         log.d('created mix channel')
     end)
 end

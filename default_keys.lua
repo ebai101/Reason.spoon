@@ -13,6 +13,7 @@ return {
     toggleToolWindow = { { 'ctrl' }, 'd' },
     toggleSpectrumEQ = { { 'ctrl' }, 's' },
     toggleRegrooveMixer = { { 'ctrl' }, 'r' },
+    toggleEditArea = { { 'ctrl' }, 'd' },
     toggleBrowser = { { 'ctrl' }, 'f' },
     exportSong = { { 'ctrl' }, 't' },
     exportLoop = { { 'ctrl', 'cmd' }, 't' },

@@ -29,7 +29,7 @@ function sequencer:bindHotkeys(maps)
     table.insert(sequencer.hotkeys, sequencer:color(maps))
 
     table.insert(sequencer.eventtaps, sequencer:mouse4Mute())
-    table.insert(sequencer.eventtaps, sequencer:pinchZoom())
+    -- table.insert(sequencer.eventtaps, sequencer:pinchZoom())
 end
 
 function sequencer:activate(app)
@@ -153,7 +153,7 @@ function sequencer:flatten(m)
     return hs.hotkey.new(m.flatten[1], m.flatten[2], function()
         sequencer.app:selectMenuItem({ 'Edit', 'Disable Stretch' })
         sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clips to New Recordings' })
-        sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Enable Stretch' })
+        sequencer.app:selectMenuItem({ 'Edit', 'Enable Stretch' })
         local ok = sequencer.app:selectMenuItem({ 'Edit', 'Delete Unused Recordings' })
         applescript(
             [[tell application "System Events" to click button "Delete" of front window of application process "Reason"]])
@@ -188,8 +188,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:doubleTempo(m)
     return hs.hotkey.new(m.doubleTempo[1], m.doubleTempo[2], function()
-        applescript(
-            'tell application "System Events" to click button 7 of window "Tool Window" of application process "Reason"')
+        sequencer.app:selectMenuItem({ 'Edit', 'Scale Tempo', 'Double' })
         log.d('doubled tempo')
     end)
 end
@@ -205,8 +204,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:halfTempo(m)
     return hs.hotkey.new(m.halfTempo[1], m.halfTempo[2], function()
-        applescript(
-            'tell application "System Events" to click button 8 of window "Tool Window" of application process "Reason"')
+        sequencer.app:selectMenuItem({ 'Edit', 'Scale Tempo', 'Half' })
         log.d('halved tempo')
     end)
 end

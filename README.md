@@ -1,3 +1,11 @@
+## Reason 13 branch
+Updated for the Reason 13 beta, some things might be subject to change on the final release.
+
+Changes:
+- Ctrl-D is now Toggle Edit Area, as the tool window was removed.
+- Pinch zoom disabled, since it's now implemented in Reason.
+- A few other semantic changes for compatibility.
+
 # Reason.spoon
 
 A Spoon for workflow optimization in Reason. This spoon greatly overhauls Reason's keyboard shortcuts so that every important shortcut can be performed with the left hand, without moving it too far. This spoon also maps extra mouse buttons to Delete/Mute for fast sequencer editing.

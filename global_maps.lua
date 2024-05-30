@@ -11,7 +11,7 @@ globalMaps.copySettingsActive = false
 
 function globalMaps:bindHotkeys(maps)
     table.insert(globalMaps.hotkeys, globalMaps:togglePianoKeys(maps))
-    table.insert(globalMaps.hotkeys, globalMaps:toggleToolWindow(maps))
+    table.insert(globalMaps.hotkeys, globalMaps:toggleEditArea(maps))
     table.insert(globalMaps.hotkeys, globalMaps:toggleSpectrumEQ(maps))
     table.insert(globalMaps.hotkeys, globalMaps:toggleRegrooveMixer(maps))
     table.insert(globalMaps.hotkeys, globalMaps:toggleBrowser(maps))
@@ -177,9 +177,30 @@ function globalMaps:toggleRegrooveMixer(m)
     end)
 end
 
+-- globalMaps:toggleEditArea(m)
+-- Method
+-- Toggles the edit area
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
+function globalMaps:toggleEditArea(m)
+    return hs.hotkey.new(m.toggleEditArea[1], m.toggleEditArea[2], function()
+        local ok = globalMaps.app:selectMenuItem({ 'Window', 'Show Edit Area' })
+        if ok then
+            log.d('edit area opened')
+        else
+            globalMaps.app:selectMenuItem({ 'Window', 'Hide Edit Area' })
+            log.d('edit area closed')
+        end
+    end)
+end
+
 -- globalMaps:toggleBrowser(m)
 -- Method
--- Toggles the sidebar browser
+-- Toggles the browser
 --
 -- Parameters:
 -- * m - A table of hotkey mappings
