@@ -11,7 +11,7 @@ globalMaps.copySettingsActive = false
 
 function globalMaps:bindHotkeys(maps)
 	table.insert(globalMaps.hotkeys, globalMaps:togglePianoKeys(maps))
-	table.insert(globalMaps.hotkeys, globalMaps:toggleEditArea(maps))
+	table.insert(globalMaps.hotkeys, globalMaps:toggleTrackPanel(maps))
 	table.insert(globalMaps.hotkeys, globalMaps:toggleSpectrumEQ(maps))
 	table.insert(globalMaps.hotkeys, globalMaps:toggleRegrooveMixer(maps))
 	table.insert(globalMaps.hotkeys, globalMaps:toggleBrowser(maps))
@@ -180,23 +180,23 @@ function globalMaps:toggleRegrooveMixer(m)
 	end)
 end
 
--- globalMaps:toggleEditArea(m)
+-- globalMaps:toggleTrackPanel(m)
 -- Method
--- Toggles the edit area
+-- Toggles the track panel
 --
 -- Parameters:
 -- * m - A table of hotkey mappings
 --
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
-function globalMaps:toggleEditArea(m)
-	return hs.hotkey.new(m.toggleEditArea[1], m.toggleEditArea[2], function()
-		local ok = globalMaps.app:selectMenuItem({ "View", "Show Edit Area" })
+function globalMaps:toggleTrackPanel(m)
+	return hs.hotkey.new(m.toggleTrackPanel[1], m.toggleTrackPanel[2], function()
+		local ok = globalMaps.app:selectMenuItem({ "View", "Show Track Panel" })
 		if ok then
-			log.d("edit area opened")
+			log.d("track panel opened")
 		else
-			globalMaps.app:selectMenuItem({ "View", "Hide Edit Area" })
-			log.d("edit area closed")
+			globalMaps.app:selectMenuItem({ "View", "Hide Track Panel" })
+			log.d("track panel closed")
 		end
 	end)
 end

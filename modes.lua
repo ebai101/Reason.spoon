@@ -108,7 +108,7 @@ end
 
 function modes:_mixer(onlyChangeModes)
 	if not onlyChangeModes then
-		local ok = modes.app:selectMenuItem({ "View", "Show Mixer" })
+		modes.app:selectMenuItem({ "View", "Show Mixer" })
 	end
 	modes.mixer:activate(modes.app)
 	modes.rack:deactivate()
@@ -118,10 +118,7 @@ end
 
 function modes:_rack(onlyChangeModes)
 	if not onlyChangeModes then
-		local ok = modes.app:selectMenuItem({ "View", "Show Rack" })
-		if not ok then
-			modes.app:selectMenuItem({ "View", "Hide Rack" })
-		end
+		modes.app:selectMenuItem({ "View", "Show Rack" })
 	end
 	modes.mixer:deactivate()
 	modes.rack:activate(modes.app)
