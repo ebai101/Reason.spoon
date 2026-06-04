@@ -15,7 +15,7 @@ reason.homepage = "https://github.com/ebai101/Reason.spoon"
 reason.license = "MIT - https://opensource.org/licenses/MIT"
 
 reason.appName = "Reason"
-reason.createDevice = dofile(hs.spoons.resourcePath("create_device.lua"))
+reason.createDevice = dofile(hs.spoons.resourcePath("create_device/create_device.lua"))
 reason.globalMaps = dofile(hs.spoons.resourcePath("global_maps.lua"))
 reason.modes = dofile(hs.spoons.resourcePath("modes.lua"))
 reason.defaultKeys = dofile(hs.spoons.resourcePath("default_keys.lua"))
@@ -78,11 +78,11 @@ end
 -- Parameters
 -- * presetCommand - A string containing a shell command
 function reason:setPresetCommand(presetCommand)
-	reason.createDevice:setPresetCommand(presetCommand)
+	reason.createDevice.presetCommand = presetCommand
 end
 
 function reason:setPresetFolders(presetFolders)
-	reason.createDevice:setPresetFolders(presetFolders)
+	reason.createDevice.presetFolders = presetFolders
 end
 
 return reason
