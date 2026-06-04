@@ -1,10 +1,10 @@
 local modes = {}
 
 modes.hotkeys = {}
-modes.mixer = dofile(hs.spoons.resourcePath('mixer.lua'))
-modes.rack = dofile(hs.spoons.resourcePath('rack.lua'))
-modes.sequencer = dofile(hs.spoons.resourcePath('sequencer.lua'))
-modes.activeMode = 'rack'
+modes.mixer = dofile(hs.spoons.resourcePath("mixer.lua"))
+modes.rack = dofile(hs.spoons.resourcePath("rack.lua"))
+modes.sequencer = dofile(hs.spoons.resourcePath("sequencer.lua"))
+modes.activeMode = "sequencer"
 
 -----------
 -- setup --
@@ -14,47 +14,50 @@ modes.activeMode = 'rack'
 -- Variable
 -- An hs.eventtap that allows F5, F6 and F7 to change hotkey modes
 -- The key events are passed through normally
-modes.eventtap = hs.eventtap.new(
-    { hs.eventtap.event.types.keyUp }, function(event)
-        local keycode = event:getKeyCode()
-        if keycode == hs.keycodes.map.f5 then
-            modes:_mixer(true)
-        elseif keycode == hs.keycodes.map.f6 then
-            modes:_rack(true)
-        elseif keycode == hs.keycodes.map.f7 then
-            modes:_sequencer(true)
-        end
-        return false, nil
-    end)
+modes.eventtap = hs.eventtap.new({ hs.eventtap.event.types.keyUp }, function(event)
+	local keycode = event:getKeyCode()
+	if keycode == hs.keycodes.map.f5 then
+		modes:_mixer(true)
+	elseif keycode == hs.keycodes.map.f6 then
+		modes:_rack(true)
+	elseif keycode == hs.keycodes.map.f7 then
+		modes:_sequencer(true)
+	end
+	return false, nil
+end)
 
 function modes:bindHotkeys(maps)
-    table.insert(modes.hotkeys, modes:toggleMixer(maps))
-    table.insert(modes.hotkeys, modes:toggleRack(maps))
-    table.insert(modes.hotkeys, modes:toggleSequencer(maps))
-    modes.mixer:bindHotkeys(maps)
-    modes.rack:bindHotkeys(maps)
-    modes.sequencer:bindHotkeys(maps)
+	table.insert(modes.hotkeys, modes:toggleMixer(maps))
+	table.insert(modes.hotkeys, modes:toggleRack(maps))
+	table.insert(modes.hotkeys, modes:toggleSequencer(maps))
+	modes.mixer:bindHotkeys(maps)
+	modes.rack:bindHotkeys(maps)
+	modes.sequencer:bindHotkeys(maps)
 end
 
 function modes:activate(app)
-    modes.app = app
-    for _, v in pairs(modes.hotkeys) do v:enable() end
-    if modes.activeMode == 'mixer' then
-        modes.mixer:activate(modes.app)
-    elseif modes.activeMode == 'rack' then
-        modes.rack:activate(modes.app)
-    elseif modes.activeMode == 'sequencer' then
-        modes.sequencer:activate(modes.app)
-    end
-    modes.eventtap:start()
+	modes.app = app
+	for _, v in pairs(modes.hotkeys) do
+		v:enable()
+	end
+	if modes.activeMode == "mixer" then
+		modes.mixer:activate(modes.app)
+	elseif modes.activeMode == "rack" then
+		modes.rack:activate(modes.app)
+	elseif modes.activeMode == "sequencer" then
+		modes.sequencer:activate(modes.app)
+	end
+	modes.eventtap:start()
 end
 
 function modes:deactivate()
-    for _, v in pairs(modes.hotkeys) do v:disable() end
-    modes.mixer:deactivate()
-    modes.rack:deactivate()
-    modes.sequencer:deactivate()
-    modes.eventtap:stop()
+	for _, v in pairs(modes.hotkeys) do
+		v:disable()
+	end
+	modes.mixer:deactivate()
+	modes.rack:deactivate()
+	modes.sequencer:deactivate()
+	modes.eventtap:stop()
 end
 
 --------------
@@ -72,7 +75,7 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function modes:toggleMixer(m)
-    return hs.hotkey.new(m.toggleMixer[1], m.toggleMixer[2], modes._mixer)
+	return hs.hotkey.new(m.toggleMixer[1], m.toggleMixer[2], modes._mixer)
 end
 
 -- modes:toggleRack(m)
@@ -86,7 +89,7 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function modes:toggleRack(m)
-    return hs.hotkey.new(m.toggleRack[1], m.toggleRack[2], modes._rack)
+	return hs.hotkey.new(m.toggleRack[1], m.toggleRack[2], modes._rack)
 end
 
 -- modes:toggleSequencer(m)
@@ -100,37 +103,40 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function modes:toggleSequencer(m)
-    return hs.hotkey.new(m.toggleSequencer[1], m.toggleSequencer[2], modes._sequencer)
+	return hs.hotkey.new(m.toggleSequencer[1], m.toggleSequencer[2], modes._sequencer)
 end
 
 function modes:_mixer(onlyChangeModes)
-    if not onlyChangeModes then
-        modes.app:selectMenuItem({ 'Window', 'View Main Mixer' })
-    end
-    modes.mixer:activate(modes.app)
-    modes.rack:deactivate()
-    modes.sequencer:deactivate()
-    modes.activeMode = 'mixer'
+	if not onlyChangeModes then
+		local ok = modes.app:selectMenuItem({ "View", "Show Mixer" })
+	end
+	modes.mixer:activate(modes.app)
+	modes.rack:deactivate()
+	modes.sequencer:deactivate()
+	modes.activeMode = "mixer"
 end
 
 function modes:_rack(onlyChangeModes)
-    if not onlyChangeModes then
-        modes.app:selectMenuItem({ 'Window', 'View Racks' })
-    end
-    modes.mixer:deactivate()
-    modes.rack:activate(modes.app)
-    modes.sequencer:deactivate()
-    modes.activeMode = 'rack'
+	if not onlyChangeModes then
+		local ok = modes.app:selectMenuItem({ "View", "Show Rack" })
+		if not ok then
+			modes.app:selectMenuItem({ "View", "Hide Rack" })
+		end
+	end
+	modes.mixer:deactivate()
+	modes.rack:activate(modes.app)
+	modes.sequencer:deactivate()
+	modes.activeMode = "rack"
 end
 
 function modes:_sequencer(onlyChangeModes)
-    if not onlyChangeModes then
-        modes.app:selectMenuItem({ 'Window', 'View Sequencer' })
-    end
-    modes.mixer:deactivate()
-    modes.rack:deactivate()
-    modes.sequencer:activate(modes.app)
-    modes.activeMode = 'sequencer'
+	if not onlyChangeModes then
+		modes.app:selectMenuItem({ "View", "Show Sequencer Only" })
+	end
+	modes.mixer:deactivate()
+	modes.rack:deactivate()
+	modes.sequencer:activate(modes.app)
+	modes.activeMode = "sequencer"
 end
 
 return modes

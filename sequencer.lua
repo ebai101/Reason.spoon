@@ -27,6 +27,8 @@ function sequencer:bindHotkeys(maps)
     table.insert(sequencer.hotkeys, sequencer:reverse(maps))
     table.insert(sequencer.hotkeys, sequencer:setLoopAndPlay(maps))
     table.insert(sequencer.hotkeys, sequencer:color(maps))
+    table.insert(sequencer.hotkeys, sequencer:toggleStretch(maps))
+    table.insert(sequencer.hotkeys, sequencer:noteTools(maps))
 
     table.insert(sequencer.eventtaps, sequencer:mouse4Mute())
     -- table.insert(sequencer.eventtaps, sequencer:pinchZoom())
@@ -289,6 +291,44 @@ function sequencer:color(m)
         local picker = sequencer.colorPicker:setup(sequencer.app, 'Track Color')
         sequencer.colorPicker:show()
         log.d('showing sequencer device color picker')
+    end)
+end
+
+-- sequencer:toggleStretch(m)
+-- Method
+-- Enables or disables stretch on a selected clip
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
+function sequencer:toggleStretch(m)
+    return hs.hotkey.new(m.toggleStretch[1], m.toggleStretch[2], function()
+        local ok = sequencer.app:findMenuItem({ 'Edit', 'Enable Stretch' })
+        if ok ~= nil then
+            sequencer.app:selectMenuItem({ 'Edit', 'Enable Stretch' })
+            log.d('enabled stretch')
+        else
+            sequencer.app:selectMenuItem({ 'Edit', 'Disable Stretch' })
+            log.d('disabled stretch')
+        end
+    end)
+end
+
+-- sequencer:noteTools(m)
+-- Method
+-- Opens the transpose note tools dialog
+--
+-- Parameters:
+-- * m - A table of hotkey mappings
+--
+-- Returns:
+-- * An hs.hotkey object, to be addded to this module's hotkeys table
+function sequencer:noteTools(m)
+    return hs.hotkey.new(m.noteTools[1], m.noteTools[2], function()
+        sequencer.app:selectMenuItem({'Edit', 'Note Tools', 'Transpose...'})
+        log.d('transpose menu')
     end)
 end
 
