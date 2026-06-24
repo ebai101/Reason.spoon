@@ -1,15 +1,15 @@
 local sequencer = {}
-local log = hs.logger.new('sequencer', 'debug')
+local log = hs.logger.new("sequencer", "debug")
 
 sequencer.hotkeys = {}
 sequencer.eventtaps = {}
 sequencer.zoomSum = 0
 sequencer.lastZoomTime = 0
 sequencer.zoomThreshold = 0.10
-sequencer.colorPicker = dofile(hs.spoons.resourcePath('color_picker.lua'))
+sequencer.colorPicker = dofile(hs.spoons.resourcePath("color_picker.lua"))
 
 local function applescript(x)
-    hs.execute('osascript -e ' .. [[']] .. string.gsub(x, [[']], [['\'']]) .. [[']])
+	hs.execute("osascript -e " .. [[']] .. string.gsub(x, [[']], [['\'']]) .. [[']])
 end
 
 -----------
@@ -17,34 +17,42 @@ end
 -----------
 
 function sequencer:bindHotkeys(maps)
-    table.insert(sequencer.hotkeys, sequencer:bounceClip(maps))
-    table.insert(sequencer.hotkeys, sequencer:flatten(maps))
-    table.insert(sequencer.hotkeys, sequencer:joinClips(maps))
-    table.insert(sequencer.hotkeys, sequencer:doubleTempo(maps))
-    table.insert(sequencer.hotkeys, sequencer:halfTempo(maps))
-    table.insert(sequencer.hotkeys, sequencer:legato(maps))
-    table.insert(sequencer.hotkeys, sequencer:quantize(maps))
-    table.insert(sequencer.hotkeys, sequencer:reverse(maps))
-    table.insert(sequencer.hotkeys, sequencer:setLoopAndPlay(maps))
-    table.insert(sequencer.hotkeys, sequencer:color(maps))
-    table.insert(sequencer.hotkeys, sequencer:toggleStretch(maps))
-    table.insert(sequencer.hotkeys, sequencer:noteTools(maps))
+	table.insert(sequencer.hotkeys, sequencer:bounceClip(maps))
+	table.insert(sequencer.hotkeys, sequencer:flatten(maps))
+	table.insert(sequencer.hotkeys, sequencer:joinClips(maps))
+	table.insert(sequencer.hotkeys, sequencer:doubleTempo(maps))
+	table.insert(sequencer.hotkeys, sequencer:halfTempo(maps))
+	table.insert(sequencer.hotkeys, sequencer:legato(maps))
+	table.insert(sequencer.hotkeys, sequencer:quantize(maps))
+	table.insert(sequencer.hotkeys, sequencer:reverse(maps))
+	table.insert(sequencer.hotkeys, sequencer:setLoopAndPlay(maps))
+	table.insert(sequencer.hotkeys, sequencer:color(maps))
+	table.insert(sequencer.hotkeys, sequencer:toggleStretch(maps))
+	table.insert(sequencer.hotkeys, sequencer:noteTools(maps))
 
-    table.insert(sequencer.eventtaps, sequencer:mouse4Mute())
-    -- table.insert(sequencer.eventtaps, sequencer:pinchZoom())
+	table.insert(sequencer.eventtaps, sequencer:mouse4Mute())
+	-- table.insert(sequencer.eventtaps, sequencer:pinchZoom())
 end
 
 function sequencer:activate(app)
-    for _, v in pairs(sequencer.hotkeys) do v:enable() end
-    for _, v in pairs(sequencer.eventtaps) do v:start() end
-    sequencer.app = app
-    log.d('sequencer activated')
+	for _, v in pairs(sequencer.hotkeys) do
+		v:enable()
+	end
+	for _, v in pairs(sequencer.eventtaps) do
+		v:start()
+	end
+	sequencer.app = app
+	log.d("sequencer activated")
 end
 
 function sequencer:deactivate()
-    for _, v in pairs(sequencer.hotkeys) do v:disable() end
-    for _, v in pairs(sequencer.eventtaps) do v:stop() end
-    log.d('sequencer deactivated')
+	for _, v in pairs(sequencer.hotkeys) do
+		v:disable()
+	end
+	for _, v in pairs(sequencer.eventtaps) do
+		v:stop()
+	end
+	log.d("sequencer deactivated")
 end
 
 -----------
@@ -58,16 +66,15 @@ end
 -- Returns:
 -- * An hs.eventtap object, to be addded to this module's eventtaps table
 function sequencer:mouse4Mute()
-    return hs.eventtap.new(
-        { hs.eventtap.event.types.otherMouseUp }, function(event)
-            local buttonNumber = tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties
-                .mouseEventButtonNumber)))
-            if buttonNumber == 3 then
-                hs.eventtap.event.newKeyEvent('m', true):setFlags({}):post()
-                hs.eventtap.event.newKeyEvent('m', false):setFlags({}):post()
-                log.d('mouse4')
-            end
-        end)
+	return hs.eventtap.new({ hs.eventtap.event.types.otherMouseUp }, function(event)
+		local buttonNumber =
+			tonumber(hs.inspect(event:getProperty(hs.eventtap.event.properties.mouseEventButtonNumber)))
+		if buttonNumber == 3 then
+			hs.eventtap.event.newKeyEvent("m", true):setFlags({}):post()
+			hs.eventtap.event.newKeyEvent("m", false):setFlags({}):post()
+			log.d("mouse4")
+		end
+	end)
 end
 
 -- sequencer:pinchZoom()
@@ -79,42 +86,50 @@ end
 -- Returns:
 -- * An hs.eventtap object, to be addded to this module's eventtaps table
 function sequencer:pinchZoom()
-    return hs.eventtap.new({ hs.eventtap.event.types.gesture }, function(event)
-        local gestureType = event:getType(true)
-        if gestureType ~= hs.eventtap.event.types.magnify then return end
-        local zoomTime = hs.timer.absoluteTime()
-        if zoomTime - sequencer.lastZoomTime > 1000000000 then sequencer.zoomSum = 0 end
-        sequencer.lastZoomTime = zoomTime
+	return hs.eventtap.new({ hs.eventtap.event.types.gesture }, function(event)
+		local gestureType = event:getType(true)
+		if gestureType ~= hs.eventtap.event.types.magnify then
+			return
+		end
+		local zoomTime = hs.timer.absoluteTime()
+		if zoomTime - sequencer.lastZoomTime > 1000000000 then
+			sequencer.zoomSum = 0
+		end
+		sequencer.lastZoomTime = zoomTime
 
-        -- the zoom key commands are much less sensitive than the scroll wheel
-        -- so we lower the threshold when using them
-        local threshold = sequencer.zoomThreshold
-        if event:getFlags()['shift'] then threshold = threshold * 0.5 end
+		-- the zoom key commands are much less sensitive than the scroll wheel
+		-- so we lower the threshold when using them
+		local threshold = sequencer.zoomThreshold
+		if event:getFlags()["shift"] then
+			threshold = threshold * 0.5
+		end
 
-        local zoomLevel = event:getTouchDetails().magnification
-        sequencer.zoomSum = sequencer.zoomSum + zoomLevel
+		local zoomLevel = event:getTouchDetails().magnification
+		sequencer.zoomSum = sequencer.zoomSum + zoomLevel
 
-        local offsets = {}
-        if sequencer.zoomSum >= threshold then
-            offsets = { 1, 0 }
-            sequencer.zoomSum = 0
-        elseif sequencer.zoomSum <= -threshold then
-            offsets = { -1, 0 }
-            sequencer.zoomSum = 0
-        else
-            return
-        end
+		local offsets = {}
+		if sequencer.zoomSum >= threshold then
+			offsets = { 1, 0 }
+			sequencer.zoomSum = 0
+		elseif sequencer.zoomSum <= -threshold then
+			offsets = { -1, 0 }
+			sequencer.zoomSum = 0
+		else
+			return
+		end
 
-        if event:getFlags()['shift'] or event:getFlags()['cmd'] then
-            local flags = { ['cmd'] = true, ['shift'] = true }
-            if event:getFlags()['cmd'] then flags['alt'] = true end
-            local key = offsets[1] == 1 and '=' or '-'
-            hs.eventtap.event.newKeyEvent(key, true):setFlags(flags):post()
-            hs.eventtap.event.newKeyEvent(key, false):setFlags(flags):post()
-        else
-            hs.eventtap.event.newScrollEvent(offsets, { 'cmd', 'shift' }, 'pixel'):post()
-        end
-    end)
+		if event:getFlags()["shift"] or event:getFlags()["cmd"] then
+			local flags = { ["cmd"] = true, ["shift"] = true }
+			if event:getFlags()["cmd"] then
+				flags["alt"] = true
+			end
+			local key = offsets[1] == 1 and "=" or "-"
+			hs.eventtap.event.newKeyEvent(key, true):setFlags(flags):post()
+			hs.eventtap.event.newKeyEvent(key, false):setFlags(flags):post()
+		else
+			hs.eventtap.event.newScrollEvent(offsets, { "cmd", "shift" }, "pixel"):post()
+		end
+	end)
 end
 
 --------------
@@ -131,10 +146,10 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:bounceClip(m)
-    return hs.hotkey.new(m.bounceClip[1], m.bounceClip[2], function()
-        sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clip to Disk…' })
-        log.d('bouncing clip to disk')
-    end)
+	return hs.hotkey.new(m.bounceClip[1], m.bounceClip[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Bounce", "Bounce Clip to Disk…" })
+		log.d("bouncing clip to disk")
+	end)
 end
 
 -- sequencer:flatten(m)
@@ -152,15 +167,16 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:flatten(m)
-    return hs.hotkey.new(m.flatten[1], m.flatten[2], function()
-        sequencer.app:selectMenuItem({ 'Edit', 'Disable Stretch' })
-        sequencer.app:selectMenuItem({ 'Edit', 'Bounce', 'Bounce Clips to New Recordings' })
-        sequencer.app:selectMenuItem({ 'Edit', 'Enable Stretch' })
-        local ok = sequencer.app:selectMenuItem({ 'Edit', 'Delete Unused Recordings' })
-        applescript(
-            [[tell application "System Events" to click button "Delete" of front window of application process "Reason"]])
-        log.d('flattened clips')
-    end)
+	return hs.hotkey.new(m.flatten[1], m.flatten[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Disable Stretch" })
+		sequencer.app:selectMenuItem({ "Edit", "Bounce", "Bounce Clips to New Recordings" })
+		sequencer.app:selectMenuItem({ "Edit", "Enable Stretch" })
+		local ok = sequencer.app:selectMenuItem({ "Edit", "Delete Unused Recordings" })
+		applescript(
+			[[tell application "System Events" to click button "Delete" of front window of application process "Reason"]]
+		)
+		log.d("flattened clips")
+	end)
 end
 
 -- sequencer:joinClips(m)
@@ -173,10 +189,10 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:joinClips(m)
-    return hs.hotkey.new(m.joinClips[1], m.joinClips[2], function()
-        sequencer.app:selectMenuItem({ 'Edit', 'Join Clips' })
-        log.d('joined clips')
-    end)
+	return hs.hotkey.new(m.joinClips[1], m.joinClips[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Join Clips" })
+		log.d("joined clips")
+	end)
 end
 
 -- sequencer:doubleTempo(m)
@@ -189,10 +205,10 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:doubleTempo(m)
-    return hs.hotkey.new(m.doubleTempo[1], m.doubleTempo[2], function()
-        sequencer.app:selectMenuItem({ 'Edit', 'Scale Tempo', 'Double' })
-        log.d('doubled tempo')
-    end)
+	return hs.hotkey.new(m.doubleTempo[1], m.doubleTempo[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Scale Tempo", "Double" })
+		log.d("doubled tempo")
+	end)
 end
 
 -- sequencer:halfTempo(m)
@@ -205,10 +221,10 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:halfTempo(m)
-    return hs.hotkey.new(m.halfTempo[1], m.halfTempo[2], function()
-        sequencer.app:selectMenuItem({ 'Edit', 'Scale Tempo', 'Half' })
-        log.d('halved tempo')
-    end)
+	return hs.hotkey.new(m.halfTempo[1], m.halfTempo[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Scale Tempo", "Half" })
+		log.d("halved tempo")
+	end)
 end
 
 -- sequencer:legato(m)
@@ -221,11 +237,12 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:legato(m)
-    return hs.hotkey.new(m.legato[1], m.legato[2], function()
-        applescript(
-            'tell application "System Events" to click button 5 of window "Tool Window" of application process "Reason"')
-        log.d('legato')
-    end)
+	return hs.hotkey.new(m.legato[1], m.legato[2], function()
+		applescript(
+			'tell application "System Events" to click button 5 of window "Tool Window" of application process "Reason"'
+		)
+		log.d("legato")
+	end)
 end
 
 -- sequencer:quantize(m)
@@ -238,10 +255,10 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:quantize(m)
-    return hs.hotkey.new(m.quantize[1], m.quantize[2], function()
-        sequencer.app:selectMenuItem({ 'Edit', 'Quantize' })
-        log.d('quantized')
-    end)
+	return hs.hotkey.new(m.quantize[1], m.quantize[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Quantize" })
+		log.d("quantized")
+	end)
 end
 
 -- sequencer:reverse(m)
@@ -254,10 +271,10 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:reverse(m)
-    return hs.hotkey.new(m.reverse[1], m.reverse[2], function()
-        sequencer.app:selectMenuItem({ 'Edit', 'Reverse' })
-        log.d('reversed')
-    end)
+	return hs.hotkey.new(m.reverse[1], m.reverse[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Reverse" })
+		log.d("reversed")
+	end)
 end
 
 -- sequencer:setLoopAndPlay(m)
@@ -270,10 +287,10 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:setLoopAndPlay(m)
-    return hs.hotkey.new(m.setLoopAndPlay[1], m.setLoopAndPlay[2], function()
-        sequencer.app:selectMenuItem({ 'Edit', 'Set Loop to Selection and Start Playback' })
-        log.d('set loop and play')
-    end)
+	return hs.hotkey.new(m.setLoopAndPlay[1], m.setLoopAndPlay[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Set Loop to Selection and Start Playback" })
+		log.d("set loop and play")
+	end)
 end
 
 -- mixer:color(m)
@@ -287,11 +304,11 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:color(m)
-    return hs.hotkey.new(m.color[1], m.color[2], function()
-        local picker = sequencer.colorPicker:setup(sequencer.app, 'Track Color')
-        sequencer.colorPicker:show()
-        log.d('showing sequencer device color picker')
-    end)
+	return hs.hotkey.new(m.color[1], m.color[2], function()
+		local picker = sequencer.colorPicker:setup(sequencer.app, "Track Color")
+		sequencer.colorPicker:show()
+		log.d("showing sequencer device color picker")
+	end)
 end
 
 -- sequencer:toggleStretch(m)
@@ -304,16 +321,16 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:toggleStretch(m)
-    return hs.hotkey.new(m.toggleStretch[1], m.toggleStretch[2], function()
-        local ok = sequencer.app:findMenuItem({ 'Edit', 'Enable Stretch' })
-        if ok ~= nil then
-            sequencer.app:selectMenuItem({ 'Edit', 'Enable Stretch' })
-            log.d('enabled stretch')
-        else
-            sequencer.app:selectMenuItem({ 'Edit', 'Disable Stretch' })
-            log.d('disabled stretch')
-        end
-    end)
+	return hs.hotkey.new(m.toggleStretch[1], m.toggleStretch[2], function()
+		local ok = sequencer.app:findMenuItem({ "Edit", "Enable Stretch" })
+		if ok ~= nil then
+			sequencer.app:selectMenuItem({ "Edit", "Enable Stretch" })
+			log.d("enabled stretch")
+		else
+			sequencer.app:selectMenuItem({ "Edit", "Disable Stretch" })
+			log.d("disabled stretch")
+		end
+	end)
 end
 
 -- sequencer:noteTools(m)
@@ -326,10 +343,10 @@ end
 -- Returns:
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:noteTools(m)
-    return hs.hotkey.new(m.noteTools[1], m.noteTools[2], function()
-        sequencer.app:selectMenuItem({'Edit', 'Note Tools', 'Transpose...'})
-        log.d('transpose menu')
-    end)
+	return hs.hotkey.new(m.noteTools[1], m.noteTools[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Note Tools", "Transpose..." })
+		log.d("transpose menu")
+	end)
 end
 
 return sequencer
