@@ -288,7 +288,7 @@ end
 -- * An hs.hotkey object, to be addded to this module's hotkeys table
 function sequencer:setLoopAndPlay(m)
 	return hs.hotkey.new(m.setLoopAndPlay[1], m.setLoopAndPlay[2], function()
-		sequencer.app:selectMenuItem({ "Edit", "Set Loop to Selection and Start Playback" })
+		sequencer.app:selectMenuItem({ "Edit", "Timeline", "Set Loop to Selection and Start Playback" })
 		log.d("set loop and play")
 	end)
 end

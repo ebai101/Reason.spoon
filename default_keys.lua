@@ -38,7 +38,7 @@ return {
 	legato = { { "alt" }, "a" },
 	quantize = { { "alt" }, "q" },
 	reverse = { { "alt" }, "r" },
-	setLoopAndPlay = { { "alt" }, "`" },
+	setLoopAndPlay = { { "cmd" }, "`" },
 	toggleStretch = { { "alt" }, "s" },
 	noteTools = { { "alt" }, "t" },
 }
