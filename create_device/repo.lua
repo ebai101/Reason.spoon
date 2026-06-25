@@ -14,7 +14,8 @@ function repo:open()
 	self.db = hs.sqlite3.open(self.path)
 
 	-- schema
-	local res = self.db:exec([=[
+	if
+		self.db:exec([=[
         create table if not exists devices (
             id integer primary key,
             uri text unique not null,
@@ -29,18 +30,22 @@ function repo:open()
             freq integer not null,
             constraint frequencies_devices_fk foreign key (uri) references devices(uri)
         );
-    ]=])
-	if res ~= hs.sqlite3.OK then
+    ]=]) ~= hs.sqlite3.OK
+	then
 		error("error creating table: " .. self.db:errmsg())
 	end
 
 	-- performance optimizations
-	self.db:exec([[
+	if
+		self.db:exec([[
         PRAGMA synchronous = OFF;
         PRAGMA journal_mode = MEMORY;
         PRAGMA temp_store = MEMORY;
         PRAGMA cache_size = -2000;
-    ]])
+    ]]) ~= hs.sqlite3.OK
+	then
+		error("error changing table pragmas: " .. self.db:errmsg())
+	end
 
 	-- indexes
 	local indexes = {
@@ -49,8 +54,7 @@ function repo:open()
 		"create index if not exists idx_frequencies_freq on frequencies(freq);",
 	}
 	for _, idx in ipairs(indexes) do
-		res = self.db:exec(idx)
-		if res ~= hs.sqlite3.OK then
+		if self.db:exec(idx) ~= hs.sqlite3.OK then
 			error("error creating index: " .. self.db:errmsg())
 		end
 	end
@@ -117,7 +121,8 @@ function repo:insertDevices(objects)
 
 	self.db:exec("begin transaction")
 
-	self.db:exec([[
+	if
+		self.db:exec([[
         create temporary table if not exists temp_devices (
             uri text primary key,
             chooser_text text not null,
@@ -125,7 +130,10 @@ function repo:insertDevices(objects)
             is_preset boolean not null,
             menu_selector text
         ) without rowid
-    ]])
+    ]]) ~= hs.sqlite3.OK
+	then
+		error("failed to create temporary table: " .. self.db:errmsg())
+	end
 
 	local tempInsert = self.db:prepare([[
         insert into temp_devices
@@ -148,7 +156,8 @@ function repo:insertDevices(objects)
 
 	tempInsert:finalize()
 
-	local result = self.db:exec([[
+	if
+		self.db:exec([[
         update devices
         set
             chooser_text = (
@@ -185,9 +194,9 @@ function repo:insertDevices(objects)
             from devices d
             where d.uri = t.uri
         );
-    ]])
-	if result ~= hs.sqlite3.OK then
-		error(self.db:errmsg())
+    ]]) ~= hs.sqlite3.OK
+	then
+		error("failed to update devices table: " .. self.db:errmsg())
 	end
 
 	self.db:exec("drop table temp_devices")
