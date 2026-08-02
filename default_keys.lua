@@ -40,5 +40,8 @@ return {
 	reverse = { { "alt" }, "r" },
 	setLoopAndPlay = { { "cmd" }, "`" },
 	toggleStretch = { { "alt" }, "s" },
-	noteTools = { { "alt" }, "t" },
+	sliceEdit = { { "alt" }, "1" },
+	vocalEdit = { { "alt" }, "2" },
+	compEdit = { { "alt" }, "3" },
+	minimizeTracks = { { "alt" }, "f" },
 }

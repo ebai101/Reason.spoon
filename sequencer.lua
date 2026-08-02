@@ -28,7 +28,10 @@ function sequencer:bindHotkeys(maps)
 	table.insert(sequencer.hotkeys, sequencer:setLoopAndPlay(maps))
 	table.insert(sequencer.hotkeys, sequencer:color(maps))
 	table.insert(sequencer.hotkeys, sequencer:toggleStretch(maps))
-	table.insert(sequencer.hotkeys, sequencer:noteTools(maps))
+	table.insert(sequencer.hotkeys, sequencer:sliceEdit(maps))
+	table.insert(sequencer.hotkeys, sequencer:vocalEdit(maps))
+	table.insert(sequencer.hotkeys, sequencer:compEdit(maps))
+	table.insert(sequencer.hotkeys, sequencer:minimizeTracks(maps))
 
 	table.insert(sequencer.eventtaps, sequencer:mouse4Mute())
 	-- table.insert(sequencer.eventtaps, sequencer:pinchZoom())
@@ -333,19 +336,38 @@ function sequencer:toggleStretch(m)
 	end)
 end
 
--- sequencer:noteTools(m)
--- Method
--- Opens the transpose note tools dialog
---
--- Parameters:
--- * m - A table of hotkey mappings
---
--- Returns:
--- * An hs.hotkey object, to be addded to this module's hotkeys table
-function sequencer:noteTools(m)
-	return hs.hotkey.new(m.noteTools[1], m.noteTools[2], function()
-		sequencer.app:selectMenuItem({ "Edit", "Note Tools", "Transpose..." })
-		log.d("transpose menu")
+function sequencer:sliceEdit(m)
+	return hs.hotkey.new(m.sliceEdit[1], m.sliceEdit[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Open In", "Slice Edit" })
+		log.d("slice edit")
+	end)
+end
+
+function sequencer:vocalEdit(m)
+	return hs.hotkey.new(m.vocalEdit[1], m.vocalEdit[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Open In", "Vocal Edit" })
+		log.d("slice edit")
+	end)
+end
+
+function sequencer:compEdit(m)
+	return hs.hotkey.new(m.compEdit[1], m.compEdit[2], function()
+		sequencer.app:selectMenuItem({ "Edit", "Open In", "Comp Edit" })
+		log.d("slice edit")
+	end)
+end
+
+function sequencer:minimizeTracks(m)
+	return hs.hotkey.new(m.minimizeTracks[1], m.minimizeTracks[2], function()
+		local ok = sequencer.app:findMenuItem({ "Edit", "Minimize Tracks" })
+		if ok ~= nil then
+			sequencer.app:selectMenuItem({ "Edit", "Minimize Tracks" })
+			log.d("minimize tracks")
+		else
+			sequencer.app:selectMenuItem({ "Edit", "Restore Track Heights" })
+			log.d("restore track heights")
+		end
+		log.d("slice edit")
 	end)
 end
 
